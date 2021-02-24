@@ -1,0 +1,27 @@
+#logo {
+    width: 300px;
+    margin: 10px 50px;
+}
+
+#logo img {
+    height: 60px;
+}
+
+nav {
+    margin: 20px 50px;
+}
+
+.nav-item > a {
+    color: black;
+    font-family: 'Nanum Myeongjo', serif;
+}
+
+.nav-pills .nav-link.active {
+    background-color: black;
+}
+
+#navbar {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+}

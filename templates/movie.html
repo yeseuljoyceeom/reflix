@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <!--font-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&family=Gothic+A1:wght@200&display=swap"
+          rel="stylesheet">
+    <!--stylesheets-->
+    <link rel="stylesheet" href="default.css">
+
+    <title>Reflix - 넷플릭스의 모든 것</title>
+
+    <style>
+        #logo {
+            width: 300px;
+            margin: 10px 50px;
+        }
+
+        #logo img {
+            height: 60px;
+        }
+
+        nav {
+            margin: 20px 50px;
+        }
+
+        .nav-item > a {
+            color: black;
+            font-family: 'Nanum Myeongjo', serif;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: black;
+        }
+
+        #navbar {
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card>.row{
+            width: 1000px;
+        }
+
+        .card>.row>.col-md-4{
+            width: 232px;
+        }
+
+        .card>.row>.col-md-8>.card-body{
+            width: 700px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div id="wrap">
+    <div id="navbar">
+        <div id="logo">
+            <img src="..\static\main_logo.png">
+        </div>
+        <nav>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">HOME</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/search">영화검색</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">What's New</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Leaving Soon</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">자유게시판</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="main">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="..\static\none.jpg" alt="none">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">제목을 입력해주세요.</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
+                            additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small class="text-muted">감독: 죠이쓰</small></p>
+                        <p class="card-text"><small class="text-muted">출연: 콰니, 은비</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

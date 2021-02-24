@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--stylesheets-->
+    <link rel="stylesheet" type="text/css" href="default.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <!--font-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&family=Gothic+A1:wght@200&display=swap"
+          rel="stylesheet">
+
+    <title>Reflix - 넷플릭스의 모든 것</title>
+
+    <script>
+        $(document).ready(function () {
+            $("#movie_list").empty()
+            showMovies()
+        })
+
+        function showMovies() {
+            $.ajax({
+                type: "GET",
+                url: "/showmovie",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let rows = response['movies']
+                        for (let i = 0; i < rows.length; i++) {
+                            let row = rows[i]
+                            let title = row['title']
+                            let type = row['type']
+                            let thumbnail = row['thumbnail']
+                            if (thumbnail == 'None') {
+                                thumbnail = '..\\static\\none.jpg'
+                            }
+
+
+                            let temp = `<div class="movie" onclick="">
+                                            <img src="${thumbnail}" class="card-img" alt="${title}">
+                                            <div class="movie-desc">
+                                                <p class="movie-type">${type}</p>
+                                                <p class="movie-title">${title}</p>
+                                            </div>
+                                        </div>`
+                            $("#movie_list").append(temp)
+                        }
+                    } else {
+                        alert('주문목록을 받아오지 못했습니다.')
+                    }
+                }
+            })
+        }
+
+    </script>
+
+    <style>
+        #logo {
+            width: 300px;
+            margin: 10px 50px;
+        }
+
+        #logo img {
+            height: 60px;
+        }
+
+        nav {
+            margin: 20px 50px;
+        }
+
+        .nav-item > a {
+            color: black;
+            font-family: 'Nanum Myeongjo', serif;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: black;
+        }
+
+        #navbar {
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #main {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        #searchbar {
+            width: calc(100vw / 5);
+            height: 100vh;
+            border: 1px solid black;
+
+        }
+
+        #movie_list {
+            width: calc(4 * (100vw / 5));
+            display: flex;
+            justify-content: space-around;
+            align-content: space-between;
+            flex-wrap: wrap;
+            overflow: auto;
+        }
+
+        .movie {
+            height: 420px;
+            width: 232px;
+        }
+
+        .movie img {
+            width: 232px;
+            height: 336px;
+        }
+
+        .movie-desc p {
+            margin: 0 5px;
+            font-family: 'Nanum Myeongjo', serif;
+        }
+
+        .movie-desc > p:nth-child(1) {
+            margin-top: 4px;
+            color: royalblue;
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .movie-desc > p:nth-child(2) {
+            margin-top: -3px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="wrap">
+    <div id="navbar">
+        <div id="logo">
+            <img src="..\static\main_logo.png">
+        </div>
+        <nav>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">HOME</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">영화검색</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">What's New</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Leaving Soon</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">자유게시판</a>
+                </li>
+                <!--
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+                -->
+            </ul>
+        </nav>
+    </div>
+    <div id="main">
+        <div id="searchbar">
+
+        </div>
+        <div id="movie_list">
+            <div class="movie">
+                <img src="..\static\filmreel.png" class="card-img" alt="...">
+                <div class="movie-desc">
+                    <p class="movie-type">영화</p>
+                    <p class="movie-title">승리호</p>
+                </div>
+            </div>
+            <div class="movie">
+                <img src="..\static\filmreel.png" class="card-img" alt="...">
+                <div class="movie-desc">
+                    <p class="movie-type">영화</p>
+                    <p class="movie-title">승리호</p>
+                </div>
+            </div>
+            <div class="movie">
+                <img src="..\static\filmreel.png" class="card-img" alt="...">
+                <div class="movie-desc">
+                    <p class="movie-type">영화</p>
+                    <p class="movie-title">승리호</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
