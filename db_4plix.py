@@ -256,21 +256,3 @@ def getinfo():
 # db.collection.update_many({},{"$rename":{"oldName":"newName"}}) renmae field
 # db.collection.update_many({},{"$unset":{"filedName":1}}) delete field
 
-
-movies = list(db.movies.find())
-base_url = "https://search.daum.net/search?w=tot&DA=YZR&t__nil_searchbox=btn&sug=&sugo=&sq=&o=&q="
-
-for movie in movies:
-    try:
-        title = movie["title"]
-        data = requests.get(base_url + urllib.parse.quote(title), headers=headers)
-        soup = BeautifulSoup(data.text, 'html.parser')
-        try:
-            thumbnail = soup.select_one("#nmovie_img_0 > a > img")["src"]
-        except:
-            thumbnail = "None"
-            pass
-    except:
-        thumbnail = "None"
-    finally:
-        db.movies.update_one({"title": title}, {"$set": {"thumbnail": thumbnail}})

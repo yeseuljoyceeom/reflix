@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!--stylesheets-->
-    <link rel="stylesheet" type="text/css" href="default.css">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -29,43 +26,94 @@
     <title>Reflix - 넷플릭스의 모든 것</title>
 
     <script>
+
+        let page = 1;
+        let size = 28;
+
         $(document).ready(function () {
             $("#movie_list").empty()
-            showMovies()
+            getContents(page, size)
         })
 
-        function showMovies() {
+        function getContents(page, size) {
             $.ajax({
                 type: "GET",
-                url: "/showmovie",
-                data: {},
+                url: "/contents",
+                data: {
+                    'page': page,
+                    'size': size
+                },
                 success: function (response) {
                     if (response['result'] == 'success') {
-                        let rows = response['movies']
-                        for (let i = 0; i < rows.length; i++) {
-                            let row = rows[i]
-                            let title = row['title']
-                            let type = row['type']
-                            let thumbnail = row['thumbnail']
-                            if (thumbnail == 'None') {
-                                thumbnail = '..\\static\\none.jpg'
-                            }
+                        $("#movie_list").empty()
+                        $("#pagination").empty()
+                        let data = response["contents"]
+                        let total = response["total"]
+                        printContents(data)
+                        printPagination(total, page)
+                    } else {
+                        alert('목록을 받아오지 못했습니다.')
 
+                    }
+                }
+            })
+        }
 
-                            let temp = `<div class="movie" onclick="">
+        function printContents(data) {
+            for (let i = 0; i < data.length; i++) {
+                let title = data[i]['title']
+                let type = data[i]['type']
+                let thumbnail = data[i]['thumbnail']
+                if (thumbnail == 'None') {
+                    thumbnail = '..\\static\\none.jpg'
+                }
+                let temp = `<div class="movie" onclick="">
                                             <img src="${thumbnail}" class="card-img" alt="${title}">
                                             <div class="movie-desc">
                                                 <p class="movie-type">${type}</p>
                                                 <p class="movie-title">${title}</p>
                                             </div>
                                         </div>`
-                            $("#movie_list").append(temp)
-                        }
-                    } else {
-                        alert('주문목록을 받아오지 못했습니다.')
-                    }
-                }
-            })
+                $("#movie_list").append(temp)
+            }
+        }
+
+        function printPagination(total, page) {
+            let totpage = Math.ceil(total / size)
+            let start = `<a href="#" onclick="getContents(${1},${size})">1</a><a href="#" style="pointer-events: none; cursor: default;">...</a>`
+            let finish = `<a href="#" style="pointer-events: none; cursor: default;">...</a><a href="#" onclick="getContents(${totpage},${size})">${totpage}</a>`
+
+            if (page === 1) {
+                $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
+            } else {
+                $("#pagination").append(`<a href="#" onclick="getContents(${page - 1},${size})">Prev</a>`)
+            }
+            //prev 1...2 3 4 5 6 ...100 Next 만들기
+            if (page <= 3) {
+                numbering(1, 5, page)
+                $("#pagination").append(finish)
+            } else if (page <= (totpage - 3)) {
+                $("#pagination").append(start)
+                numbering(page - 2, page + 2, page)
+                $("#pagination").append(finish)
+            } else {
+                $("#pagination").append(start)
+                numbering(totpage - 5, totpage, page)
+            }
+
+            if (page === totpage) {
+                $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
+            } else {
+                $("#pagination").append(`<a href="#" onclick="getContents(${page + 1},${size})">Next</a>`)
+            }
+        }
+
+        function numbering(s, f, page) {
+            for (let i = s; i <= f; i++) {
+                let active = (page === i) ? 'active' : ''
+                let temp = `<a class="${active}" href="#" onclick='getContents(${i},${size})'>${i}</a>`
+                $("#pagination").append(temp)
+            }
         }
 
     </script>
@@ -145,6 +193,30 @@
         .movie-desc > p:nth-child(2) {
             margin-top: -3px;
         }
+
+        #pagination a {
+            margin: 5px;
+            text-decoration: none;
+            color: black;
+            font-size: 20px;
+        }
+
+        #pagination {
+            text-align: center;
+            margin: 30px auto;
+        }
+
+        #pagination .active {
+            color: white;
+            pointer-events: none;
+            cursor: default;
+            text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+        }
+
+        .currentpage {
+            pointer-events: none;
+            cursor: default;
+        }
     </style>
 
 </head>
@@ -183,6 +255,7 @@
         <div id="searchbar">
 
         </div>
+
         <div id="movie_list">
             <div class="movie">
                 <img src="..\static\filmreel.png" class="card-img" alt="...">
@@ -206,6 +279,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="pagination">
+
     </div>
 </div>
 </body>
