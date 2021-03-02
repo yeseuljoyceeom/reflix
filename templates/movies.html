@@ -1,288 +1,275 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "layout.html" %}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+{% block head %}
+{{ super() }}
+{% block style %}
+<style>
+    #main {
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+    }
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+    #searchbar {
+        display: flex;
+        justify-content: flex-end;
+        width: calc(100vw - 80px);
+    }
 
-    <!--font-->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&family=Gothic+A1:wght@200&display=swap"
-          rel="stylesheet">
+    .form-check{
+        padding-left: 40px;
+        /*font-family: 'Nanum Myeongjo', serif;*/
+        font-size: 15px;
+    }
 
-    <title>Reflix - 넷플릭스의 모든 것</title>
+    #movie_list {
+        width: calc(100vw - 80px);
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        justify-content: space-around;
+        align-content: space-around;
+        flex-wrap: wrap;
+        overflow: auto;
+        border: 1px solid black;
+    }
 
-    <script>
+    .movie {
+        height: 450px;
+        width: calc(100% / 5);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 19px;
 
-        let page = 1;
-        let size = 28;
+    }
 
-        $(document).ready(function () {
-            $("#movie_list").empty()
-            getContents(page, size)
-        })
+    .movie img {
+        width: 232px;
+        height: 336px;
+    }
 
-        function getContents(page, size) {
-            $.ajax({
-                type: "GET",
-                url: "/contents",
-                data: {
-                    'page': page,
-                    'size': size
-                },
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        $("#movie_list").empty()
-                        $("#pagination").empty()
-                        let data = response["contents"]
-                        let total = response["total"]
-                        printContents(data)
-                        printPagination(total, page)
-                    } else {
-                        alert('목록을 받아오지 못했습니다.')
+    .movie-desc p {
+        margin: 0 5px;
+        /*font-family: 'Noto Sans KR', sans-serif;*/
+    }
 
-                    }
-                }
-            })
-        }
+    .movie-desc {
+        margin-top: 10px;
+    }
 
-        function printContents(data) {
-            for (let i = 0; i < data.length; i++) {
-                let title = data[i]['title']
-                let type = data[i]['type']
-                let thumbnail = data[i]['thumbnail']
-                if (thumbnail == 'None') {
-                    thumbnail = '..\\static\\none.jpg'
-                }
-                let temp = `<div class="movie" onclick="">
-                                            <img src="${thumbnail}" class="card-img" alt="${title}">
-                                            <div class="movie-desc">
-                                                <p class="movie-type">${type}</p>
-                                                <p class="movie-title">${title}</p>
-                                            </div>
-                                        </div>`
-                $("#movie_list").append(temp)
-            }
-        }
+    .movie-desc > p:nth-child(1) {
+        /*margin-top: 4px;*/
+        color: royalblue;
+        font-size: 12px;
+        text-align: left;
 
-        function printPagination(total, page) {
-            let totpage = Math.ceil(total / size)
-            let start = `<a href="#" onclick="getContents(${1},${size})">1</a><a href="#" style="pointer-events: none; cursor: default;">...</a>`
-            let finish = `<a href="#" style="pointer-events: none; cursor: default;">...</a><a href="#" onclick="getContents(${totpage},${size})">${totpage}</a>`
+    }
 
-            if (page === 1) {
-                $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
-            } else {
-                $("#pagination").append(`<a href="#" onclick="getContents(${page - 1},${size})">Prev</a>`)
-            }
-            //prev 1...2 3 4 5 6 ...100 Next 만들기
-            if (page <= 3) {
-                numbering(1, 5, page)
-                $("#pagination").append(finish)
-            } else if (page <= (totpage - 3)) {
-                $("#pagination").append(start)
-                numbering(page - 2, page + 2, page)
-                $("#pagination").append(finish)
-            } else {
-                $("#pagination").append(start)
-                numbering(totpage - 5, totpage, page)
-            }
+    .movie-desc > p:nth-child(2) {
+        font-size: 15px;
+        /*text-align: center;*/
+    }
 
-            if (page === totpage) {
-                $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
-            } else {
-                $("#pagination").append(`<a href="#" onclick="getContents(${page + 1},${size})">Next</a>`)
-            }
-        }
+    #pagination a {
+        margin: 5px;
+        text-decoration: none;
+        color: black;
+        font-size: 20px;
+        font-family: 'Abril Fatface', cursive;
+    }
 
-        function numbering(s, f, page) {
-            for (let i = s; i <= f; i++) {
-                let active = (page === i) ? 'active' : ''
-                let temp = `<a class="${active}" href="#" onclick='getContents(${i},${size})'>${i}</a>`
-                $("#pagination").append(temp)
-            }
-        }
+    #pagination {
+        text-align: center;
+        margin: 30px auto;
+    }
 
-    </script>
+    #pagination .active {
+        color: white;
+        pointer-events: none;
+        cursor: default;
+        text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+        border: 1px solid black;
+        border-radius: 30%;
+        padding: 5px;
+    }
 
-    <style>
-        #logo {
-            width: 300px;
-            margin: 10px 50px;
-        }
+    .currentpage {
+        pointer-events: none;
+        cursor: default;
+    }
+</style>
+{% endblock %}
+{% block script %}
 
-        #logo img {
-            height: 60px;
-        }
+{% endblock %}
+{% endblock %}
 
-        nav {
-            margin: 20px 50px;
-        }
-
-        .nav-item > a {
-            color: black;
-            font-family: 'Nanum Myeongjo', serif;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: black;
-        }
-
-        #navbar {
-            height: 70px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #main {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        #searchbar {
-            width: calc(100vw / 5);
-            height: 100vh;
-            border: 1px solid black;
-
-        }
-
-        #movie_list {
-            width: calc(4 * (100vw / 5));
-            display: flex;
-            justify-content: space-around;
-            align-content: space-between;
-            flex-wrap: wrap;
-            overflow: auto;
-        }
-
-        .movie {
-            height: 420px;
-            width: 232px;
-        }
-
-        .movie img {
-            width: 232px;
-            height: 336px;
-        }
-
-        .movie-desc p {
-            margin: 0 5px;
-            font-family: 'Nanum Myeongjo', serif;
-        }
-
-        .movie-desc > p:nth-child(1) {
-            margin-top: 4px;
-            color: royalblue;
-            font-size: 13px;
-            text-align: right;
-        }
-
-        .movie-desc > p:nth-child(2) {
-            margin-top: -3px;
-        }
-
-        #pagination a {
-            margin: 5px;
-            text-decoration: none;
-            color: black;
-            font-size: 20px;
-        }
-
-        #pagination {
-            text-align: center;
-            margin: 30px auto;
-        }
-
-        #pagination .active {
-            color: white;
-            pointer-events: none;
-            cursor: default;
-            text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-        }
-
-        .currentpage {
-            pointer-events: none;
-            cursor: default;
-        }
-    </style>
-
-</head>
-<body>
-<div id="wrap">
-    <div id="navbar">
-        <div id="logo">
-            <img src="..\static\main_logo.png">
+{% block content %}
+<div id="main">
+    <div id="searchbar">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="latest"
+                   checked="checked">
+            <label class="form-check-label" for="flexRadioDefault1">
+                최신순
+            </label>
         </div>
-        <nav>
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">HOME</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">영화검색</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">What's New</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Leaving Soon</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">자유게시판</a>
-                </li>
-                <!--
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
-                -->
-            </ul>
-        </nav>
-    </div>
-    <div id="main">
-        <div id="searchbar">
-
-        </div>
-
-        <div id="movie_list">
-            <div class="movie">
-                <img src="..\static\filmreel.png" class="card-img" alt="...">
-                <div class="movie-desc">
-                    <p class="movie-type">영화</p>
-                    <p class="movie-title">승리호</p>
-                </div>
-            </div>
-            <div class="movie">
-                <img src="..\static\filmreel.png" class="card-img" alt="...">
-                <div class="movie-desc">
-                    <p class="movie-type">영화</p>
-                    <p class="movie-title">승리호</p>
-                </div>
-            </div>
-            <div class="movie">
-                <img src="..\static\filmreel.png" class="card-img" alt="...">
-                <div class="movie-desc">
-                    <p class="movie-type">영화</p>
-                    <p class="movie-title">승리호</p>
-                </div>
-            </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="oldest">
+            <label class="form-check-label" for="flexRadioDefault2">
+                오래된순
+            </label>
         </div>
     </div>
-    <div id="pagination">
 
+    <div id="movie_list">
+        <div class="movie">
+            <img src="..\static\filmreel.png" class="card-img" alt="...">
+            <div class="movie-desc">
+                <p class="movie-type">영화</p>
+                <p class="movie-title">승리호</p>
+            </div>
+        </div>
+        <div class="movie">
+            <img src="..\static\filmreel.png" class="card-img" alt="...">
+            <div class="movie-desc">
+                <p class="movie-type">영화</p>
+                <p class="movie-title">승리호</p>
+            </div>
+        </div>
+        <div class="movie">
+            <img src="..\static\filmreel.png" class="card-img" alt="...">
+            <div class="movie-desc">
+                <p class="movie-type">영화</p>
+                <p class="movie-title">승리호</p>
+            </div>
+        </div>
     </div>
 </div>
-</body>
-</html>
+<hr/>
+<div id="pagination">
+
+</div>
+<hr/>
+
+<script>
+
+    let page = 1
+    let size = 25
+    let order = 'latest'
+
+    $(document).ready(function () {
+        $(".nav-item").children("a").removeClass("active")
+        $(".nav.nav-pills>.nav-item:nth-child(2)>a").addClass("active")
+        $("#movie_list").empty()
+        $("#pagination").empty()
+        if ((location.search.substr(location.search.indexOf("?") + 1))) {
+            let params = (location.search.substr(location.search.indexOf("?") + 1)).split("&")
+            page = Number(params[0].split("=")[1])
+            order = params[1].split("=")[1]
+        }
+
+        if (order == 'latest') {
+            $("input[value='latest']").prop("checked", true);
+        } else {
+            $("input[value='oldest']").prop("checked", true);
+        }
+        getContents()
+
+    })
+
+    $("input[name='flexRadioDefault'][type='radio']").change(function () {
+        order = this.value
+
+        window.open(`/search?page=1&order=${order}`, "_self")
+
+    })
+
+
+    function getContents() {
+        $.ajax({
+            type: "GET",
+            url: "/contents",
+            data: {
+                'page': page,
+                'size': size,
+                'order': order
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    $("#movie_list").empty()
+                    $("#pagination").empty()
+                    let data = response["contents"]
+                    let total = response["total"]
+                    printContents(data)
+                    printPagination(total, page, order)
+                } else {
+                    alert('목록을 받아오지 못했습니다.')
+
+                }
+            }
+        })
+    }
+
+    function printContents(data) {
+        for (let i = 0; i < data.length; i++) {
+            let title = data[i]['title']
+            let type = data[i]['type'].split(" ")[0]
+            let id = data[i]['contentId']
+            let thumbnail = data[i]['thumbnail']
+            if (thumbnail == 'None') {
+                thumbnail = '..\\static\\none.jpg'
+            }
+            let temp = `<div class="movie" onclick="">
+                                                <a href = "/movie?contentID=${id}" ><img src="${thumbnail}" class="card-img" alt="${title}" /></a>
+                                                <div class="movie-desc">
+                                                    <p class="movie-type">${type}</p>
+                                                    <p class="movie-title">${title}</p>
+                                                </div>
+                                            </div>`
+            $("#movie_list").append(temp)
+        }
+    }
+
+    function printPagination(total, page, order) {
+        let totpage = Math.ceil(total / size)
+        let start = `<a href="/search?page=1&order=${order}">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
+        let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="/search?page=${totpage}&order=${order}">${totpage}</a>`
+
+        if (page === 1) {
+            $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
+        } else {
+            $("#pagination").append(`<a href="/search?page=${page - 1}&order=${order}">Prev</a>`)
+        }
+        //prev 1...2 3 4 5 6 ...100 Next 만들기
+        if (page <= 3) {
+            numbering(1, 5, page)
+            $("#pagination").append(finish)
+        } else if (page <= (totpage - 3)) {
+            $("#pagination").append(start)
+            numbering(page - 2, page + 2, page)
+            $("#pagination").append(finish)
+        } else {
+            $("#pagination").append(start)
+            numbering(totpage - 5, totpage, page)
+        }
+
+        if (page === totpage) {
+            $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
+        } else {
+            $("#pagination").append(`<a href="/search?page=${page + 1}&order=${order}">Next</a>`)
+        }
+    }
+
+    function numbering(s, f, page) {
+        for (let i = s; i <= f; i++) {
+            let active = (page === i) ? 'active' : ''
+            let temp = `<a class="${active}" href="/search?page=${i}&order=${order}">${i}</a>`
+            $("#pagination").append(temp)
+        }
+    }
+
+
+</script>
+{% endblock %}

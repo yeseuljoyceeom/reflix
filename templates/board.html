@@ -1,10 +1,267 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "layout.html" %}
 
-</body>
-</html>
+{% block head %}
+{{ super() }}
+
+{% block style %}
+<style>
+    #posting, #postlist{
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    #posting {
+        display: none;
+    }
+
+    #main {
+        width: calc(100vw - 300px);
+        margin: 50px auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #postlist > table tr td:nth-child(1) {
+        width: 10%;
+    }
+
+    #postlist > table tr td:nth-child(2) {
+        width: 80%;
+    }
+
+    #postlist > table tr td:nth-child(3) {
+        width: 10%;
+    }
+
+    #postlist button {
+        float: right;
+        margin-right: 15px;
+    }
+
+    #postlist a {
+        text-decoration: none;
+        color: black;
+    }
+
+    #pagination a {
+        margin: 5px;
+        text-decoration: none;
+        color: black;
+        font-size: 20px;
+        font-family: 'Abril Fatface', cursive;
+    }
+
+    #pagination {
+        text-align: center;
+        margin: auto;
+    }
+
+    #pagination .active {
+        color: white;
+        pointer-events: none;
+        cursor: default;
+        text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+        border: 1px solid black;
+        border-radius: 30%;
+        padding: 5px;
+    }
+
+    .currentpage {
+        pointer-events: none;
+        cursor: default;
+    }
+
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div id="posting">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="">
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" id="content" rows="3" placeholder="내용입력"></textarea>
+        </div>
+        <button type="button" class="btn btn-dark" onclick="cancelpost()">취소</button>
+        <button type="button" class="btn btn-dark" onclick="postcomplete()">완료</button>
+    </div>
+
+    <div id="postlist">
+        <table class="table" id="post-table">
+            <thead>
+            <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Title</th>
+                <th scope="col">Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td><a href="/boardpost?postId=1">제목입니다.</a></td>
+                <td>2021/03/02</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-dark" onclick="posting()">글쓰기</button>
+    </div>
+
+    <hr/>
+    <div id="pagination">
+
+    </div>
+    <hr/>
+
+</div>
+
+<script>
+
+    let page = 1
+    let size = 10
+    $(document).ready(function () {
+        $(".nav-item").children("a").removeClass("active")
+        $(".nav.nav-pills>.nav-item:nth-child(5)>a").addClass("active")
+        $("#post-table tbody").empty()
+        $("#pagination").empty()
+        getPost(page)
+    })
+
+    function posting() {
+        $('#posting').show()
+        $('#postlist').hide()
+        $('#pagination').hide()
+    }
+
+    function cancelpost() {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            $('#posting').hide()
+            $('#postlist').show()
+            $('#pagination').show()
+        } else {
+            return;
+        }
+    }
+
+    function postcomplete() {
+        let title = $("#title").val()
+        let content = $("#content").val()
+        let today = new Date()
+        let year = today.getFullYear(); // 년도
+        let month = today.getMonth() + 1;  // 월
+        let day = today.getDate();  // 날짜
+        let date = year + "/" + month + "/" + day
+
+        if (title == '') {
+            alert('제목을 입력해 주세요')
+            return
+        } else if (content == '') {
+            alert('내용을 입력해 주세요')
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/posts",
+            data: {
+                'title_give': title,
+                'content_give': content,
+                'date_give': date,
+            },
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    alert(response['msg'])
+                    window.location.reload();
+                } else {
+                    alert("작성 실패")
+                }
+            }
+        })
+    }
+
+    function getPost(page) {
+        $("#post-table tbody").empty()
+        $("#pagination").empty()
+        $.ajax({
+            type: "GET",
+            url: "/posts",
+            data: {
+                'page_give': page,
+                'size_give': size
+            },
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    let posts = response['data']
+                    let total = Number(response['total'])
+                    for (let i = 0; i < posts.length; i++) {
+                        let post = posts[i]
+                        let postId = post['postId']
+                        let title = post['title']
+                        let date = post['date']
+
+                        let temp = `<tr>
+                                    <th scope="row">${postId}</th>
+                                    <td><a href="/boardpost?postId=${postId}">${title}</a></td>
+                                    <td>${date}</td>
+                                </tr>`
+
+                        $('#post-table tbody').append(temp)
+                    }
+                    printPagination(total, page)
+                }
+            }
+        })
+    }
+
+    function printPagination(total, page) {
+        let totpage = Math.ceil(total / size)
+        let start = `<a href="#" onclick="getPost(1)">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
+        let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="#" onclick="getPost(${totpage})">${totpage}</a>`
+
+        if (page === 1) {
+            $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
+        } else {
+            $("#pagination").append(`<a href="#" onclick="getPost(${page - 1})">Prev</a>`)
+        }
+        //prev 1...2 3 4 5 6 ...100 Next 만들기
+
+        if (totpage <= 7) {
+            numbering(1, totpage, page)
+        } else {
+            if (page <= 3) {
+                numbering(1, 5, page)
+                $("#pagination").append(finish)
+            } else if (page <= (totpage - 3)) {
+                $("#pagination").append(start)
+                numbering(page - 2, page + 2, page)
+                $("#pagination").append(finish)
+            } else {
+                $("#pagination").append(start)
+                numbering(totpage - 5, totpage, page)
+            }
+        }
+
+        if (page === totpage) {
+            $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
+        } else {
+            $("#pagination").append(`<a href="#" onclick="getPost(${page + 1})">Next</a>`)
+        }
+    }
+
+    function numbering(s, f, page) {
+        for (let i = s; i <= f; i++) {
+            let active = (page === i) ? 'active' : ''
+            let temp = `<a href="#" class="${active}" onclick="getPost(${i})">${i}</a>`
+            $("#pagination").append(temp)
+        }
+    }
+
+
+</script>
+{% endblock %}

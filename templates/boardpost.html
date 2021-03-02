@@ -1,0 +1,175 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{{ super() }}
+
+{% block style %}
+<style>
+
+    #main {
+        width: calc(100vw - 300px);
+        margin: 50px auto;
+    }
+
+    #showcontent {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-bottom: 2px solid #353535;
+    }
+
+    .title {
+        border-top: 2px solid #353535;
+    }
+
+    .title > h4 {
+        margin: 5px 10px;
+    }
+
+    .info {
+        background-color: #F5F5F5;
+        text-align: right;
+        border-top: 1px solid #DEDEDE;
+    }
+
+    .info > p {
+        margin: auto 5px;
+        color: dimgray;
+    }
+
+    .content {
+        width: 90%;
+        margin: 30px auto;
+    }
+
+    #comment {
+        margin: 50px auto;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #comment img {
+        max-width: 25px;
+        margin-right: 5px;
+    }
+
+    .mb-3 button {
+        float: right;
+        margin-top: 10px;
+    }
+
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div id="showcontent">
+        <div class="title">
+            <h3>제목입니다.</h3>
+        </div>
+        <div class="info">
+            <p>2021/03/02</p>
+        </div>
+        <div class="content">
+            <p>내용입니다.</p>
+        </div>
+    </div>
+
+    <div id="comment">
+        <p><img src="../static/comments.png">댓글: </p>
+        <div class="mb-3">
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <button type="button" class="btn btn-dark" onclick="postcomment()">작성</button>
+        </div>
+    </div>
+
+    <div id="comment_list">
+
+    </div>
+
+</div>
+
+
+<script>
+    let postId = (location.search.substr(location.search.indexOf("?") + 1)).split("=")[1]
+    $(document).ready(function () {
+        $(".nav-item").children("a").removeClass("active")
+        $('#showcontent').empty()
+        $('#comment_list').empty()
+        getPost()
+    })
+
+    function getPost() {
+        $.ajax({
+            type: "GET",
+            url: "/post",
+            data: {
+                'id_give': postId
+            },
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    let post = response["data"]
+                    let title = post['title']
+                    let date = post['date']
+                    let content = post['content']
+                    let comments = post['comment']
+                    if (comments) {
+                        for (let i = 0; i < comments.length; i++) {
+                            let comment = comments[i]
+                            let date = comment['date']
+                            let text = comment['comment']
+                            let temp = `<hr/><p>${date}</p><p>${text}</p>`
+                            $('#comment_list').append(temp)
+                        }
+                    }
+                    let temp = `<div class="title">
+                                    <h4>${title}</h4>
+                                </div>
+                                <div class="info">
+                                    <p>${date}</p>
+                                </div>
+                                <div class="content">
+                                    <p>${content}</p>
+                                </div>`
+
+                    $('#showcontent').append(temp)
+                }
+            }
+        })
+    }
+
+    function postcomment() {
+        let comment = $("#exampleFormControlTextarea1").val()
+        let today = new Date()
+        let year = today.getFullYear(); // 년도
+        let month = today.getMonth() + 1;  // 월
+        let day = today.getDate();  // 날짜
+        let date = year + "/" + month + "/" + day
+        if (comment == ''){
+            alert('댓글을 입력해 주세요')
+            return
+        }
+        $.ajax({
+            type: "POST",
+            url: "/board_comment",
+            data: {
+                'id_give':postId,
+                'comment_give': comment,
+                'date_give': date
+            },
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    alert(response['msg'])
+                    window.location.reload();
+                } else {
+                    alert("작성 실패")
+                }
+            }
+        })
+    }
+
+
+</script>
+{% endblock %}

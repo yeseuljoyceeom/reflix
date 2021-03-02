@@ -256,3 +256,117 @@ def getinfo():
 # db.collection.update_many({},{"$rename":{"oldName":"newName"}}) renmae field
 # db.collection.update_many({},{"$unset":{"filedName":1}}) delete field
 
+drama = ['도시남녀의 사랑법', '경우의 수', '상견니', '첫사랑의 멜로디', '열여덟의 순간', '김비서가 왜그럴까', '백일의 낭군님', '디어 마이 프렌즈', '애타는 로맨스', '안녕? 나야!',
+         'the k2', '보이스 1', '모범형사', '아는 와이프', '터널', '리갈 하이', '우아한 친구들']
+movie = ['트와일라잇', '죽지않는 인간들의 밤', '적선인 흑마살수', '365일', '킹 아서: 제왕의 검', '날씨의 아이', '목소리의 형태', '조작된 도시', '너의 결혼식', '컨저링',
+         '탐정 더 비기닝', '문신을 한 신부님', '뉴문', '마션', '아가씨', '인헤리턴스', '시간 이탈자', '모노노케 히메', '신비한 동물사전', '신과 함께 인과 연', '레베카',
+         '브레이킹 던', '나의 소녀시대', '너의 이름은', '나는 내일, 어제의 너와 만난다', '키싱부스', '건축학 개론', '너와 100번째 사랑', '말 할 수 없는 비밀', '피끓는 청춘',
+         '눈물이 주룩주룩',
+         '울고싶은 나는 고양이 가면을 쓴다', '8월의 크리스마스', '조제, 호랑이 그리고 물고기들', '지금, 만나러 갑니다', '이클립스', '어거스트 러쉬', '악마는 프라다를 입는다',
+         '엣지 오브 투모로', '컨테이젼',
+         '가타카', '올드 가드', '캐스트 어웨이', '미스 페레그린과 이상한 아이들의 집', '로맨틱 홀리데이', '패밀리 맨', '에린 브로코비치', '월드워Z', '데드풀', '메멘토',
+         '완벽한 타인',
+         '극한직업', '곤지암', '변신', '협상']
+
+# cnt = 5271
+#
+# base_url = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query="
+#
+# for m in movie:
+#     title = m
+#     data = requests.get(base_url + urllib.parse.quote(title), headers=headers)
+#     soup = BeautifulSoup(data.text, 'html.parser')
+#
+#     try:
+#         code = soup.select_one("#main_pack > div.sc_new.cs_common_module.case_empasis.color_15._au_movie_content_wrap > div.cm_top_wrap._sticky > div.title_area._title_area > h2 > a")["href"].split("=")[1]
+#         movie_url = "https://movie.naver.com/movie/bi/mi/basic.nhn?code="
+#         info = requests.get(movie_url + code, headers=headers)
+#         ssoup = BeautifulSoup(info.text, 'html.parser')
+#
+#         try:
+#             thumbnail = soup.select_one("#main_pack > div.sc_new.cs_common_module.case_empasis.color_4._au_movie_content_wrap > div.cm_content_wrap > div.cm_content_area._cm_content_area_info > div.cm_info_box > div.detail_info > a > img")["src"]
+#         except:
+#             thumbnail = "None"
+#             pass
+#
+#         try:
+#             country = soup.select_one("#main_pack > div.sc_new.cs_common_module.case_empasis.color_4._au_movie_content_wrap > div.cm_content_wrap > div.cm_content_area._cm_content_area_info > div.cm_info_box > div.detail_info > dl > div:nth-child(1) > dd").text()
+#         except:
+#             country = "None"
+#             pass
+#
+#         try:
+#             genre = soup.select_one(
+#                 "#main_pack > div.sc_new.cs_common_module.case_empasis.color_4._au_movie_content_wrap > div.cm_content_wrap > div.cm_content_area._cm_content_area_info > div.cm_info_box > div.detail_info > dl > div:nth-child(1) > dd").text
+#
+#         except:
+#             genre = "None"
+#             pass
+#
+#         try:
+#             runtime = soup.select_one(
+#                 "#main_pack > div.sc_new.cs_common_module.case_empasis.color_4._au_movie_content_wrap > div.cm_content_wrap > div.cm_content_area._cm_content_area_info > div.cm_info_box > div.detail_info > dl > div:nth-child(1) > dd").text
+#         except:
+#             runtime = "None"
+#             pass
+#
+#         try:
+#             director = soup.select_one(
+#                 "#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(4) > p > a").text
+#         except:
+#             director = "None"
+#             pass
+#
+#         try:
+#             cast_list = soup.select_one("#content > div.article > div.mv_info_area > div.mv_info > dl > dd:nth-child(6) > p a")
+#             temp=[]
+#             for c in cast_list:
+#                 temp.append(c.select_one("div > div > strong > a").text)
+#             cast = ', '.join(temp[1:])
+#
+#
+#         except:
+#             cast = "None"
+#             pass
+#
+#         try:
+#             desc = ssoup.select_one(
+#                 "#content > div.article > div.section_group.section_group_frst > div:nth-child(1) > div > div.story_area > p").text.strip()
+#         except:
+#             desc = "None"
+#             pass
+#
+#         try:
+#             year = soup.select_one("#main_pack > div.sc_new.cs_common_module.case_empasis.color_15._au_movie_content_wrap > div.cm_top_wrap._sticky > div.title_area._title_area > div > span:nth-child(5)").text
+#         except:
+#             year = "None"
+#             pass
+#
+#     except:
+#         country = "None"
+#         genre = "None"
+#         runtime = "None"
+#         director = "None"
+#         cast = "None"
+#         desc = "None"
+#         thumbnail = "None"
+#         year = "None"
+#
+#     finally:
+#         doc = {
+#             'title': title,
+#             'type': '영화',
+#             'country': country,
+#             'genre': genre,
+#             'runtime': runtime,
+#             'director': director,
+#             'cast': cast,
+#             'desc': desc,
+#             'thumbnail': thumbnail,
+#             'contentId': cnt,
+#             'year':year
+#         }
+#
+#     print(doc)
+#     cnt += 1
+

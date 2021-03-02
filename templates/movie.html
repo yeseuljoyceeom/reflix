@@ -1,121 +1,376 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "layout.html" %}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+{% block head %}
+{{ super() }}
+{% block style %}
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+<style>
+    #main {
+        width: calc(100vw - 200px);
+        margin: 50px auto;
+        display: flex;
+        flex-direction: column;
+    }
 
-    <!--font-->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&family=Gothic+A1:wght@200&display=swap"
-          rel="stylesheet">
-    <!--stylesheets-->
-    <link rel="stylesheet" href="default.css">
+    .movieinfo {
+        display: flex;
+        justify-content: space-evenly;
+    }
 
-    <title>Reflix - 넷플릭스의 모든 것</title>
+    .movieinfo > img {
+        max-width: 300px;
+        max-height: 434px;
+        width: 300px;
+        height: 434px;
+    }
 
-    <style>
-        #logo {
-            width: 300px;
-            margin: 10px 50px;
-        }
+    .rightblock {
 
-        #logo img {
-            height: 60px;
-        }
+        width: 500px;
 
-        nav {
-            margin: 20px 50px;
-        }
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
 
-        .nav-item > a {
-            color: black;
-            font-family: 'Nanum Myeongjo', serif;
-        }
+    .txtinfo .title {
+        font-family: 'Black Han Sans', sans-serif;
+        font-size: 35px;
+    }
 
-        .nav-pills .nav-link.active {
-            background-color: black;
-        }
+    .txtinfo .year {
+        font-size: 20px;
+        margin-left: 10px;
+    }
 
-        #navbar {
-            height: 70px;
-            display: flex;
-            justify-content: space-between;
-        }
+    .txtinfo th {
+        width: 70px;
+        padding-right: 10px;
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 20px;
+        color: dimgray;
+    }
 
-        .card>.row{
-            width: 1000px;
-        }
+    .desc > span {
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 20px;
+        color: dimgray;
+    }
 
-        .card>.row>.col-md-4{
-            width: 232px;
-        }
+    #comment {
+        margin-top: 50px;
+        width: calc(100vw - 400px);
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .card>.row>.col-md-8>.card-body{
-            width: 700px;
-        }
-    </style>
+    #star {
+        color: dimgray;
+    }
 
-</head>
+    #star a {
+        text-decoration: none;
+        color: gainsboro;
+    }
 
-<body>
-<div id="wrap">
-    <div id="navbar">
-        <div id="logo">
-            <img src="..\static\main_logo.png">
-        </div>
-        <nav>
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">HOME</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/search">영화검색</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">What's New</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Leaving Soon</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">자유게시판</a>
-                </li>
-            </ul>
-        </nav>
+    #star a.on {
+        color: royalblue;
+    }
+
+    #star span {
+        margin-left: 20px;
+    }
+
+    .mb-3 button {
+        float: right;
+        margin-top: 10px;
+    }
+
+    .star-and-date {
+        display: flex;
+        justify-content: space-between;
+        color: gainsboro;
+    }
+
+    .star-and-date > p span.on {
+        color: royalblue;
+    }
+
+</style>
+{% endblock %}
+{% block script%}
+
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+
+<div id="main">
+    <div class="movieinfo">
+        <!--영화 소개-->
     </div>
-
-    <div id="main">
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="..\static\none.jpg" alt="none">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">제목을 입력해주세요.</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                            additional content. This content is a little bit longer.</p>
-                        <p class="card-text"><small class="text-muted">감독: 죠이쓰</small></p>
-                        <p class="card-text"><small class="text-muted">출연: 콰니, 은비</small></p>
-                    </div>
-                </div>
+    <div id="comment">
+        <div class="userinput">
+            <P id="star"> <!-- 부모 -->
+                <a href="#" value="1">★</a> <!-- 자식들-->
+                <a href="#" value="2">★</a>
+                <a href="#" value="3">★</a>
+                <a href="#" value="4">★</a>
+                <a href="#" value="5">★</a>
+                <span>0</span>/5점
+            <p>
+            <div class="mb-3">
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                <button type="button" class="btn btn-dark" onclick="postcomment()">작성</button>
             </div>
         </div>
+
+        <div class="commentlist">
+
+        </div>
+
     </div>
 </div>
-</body>
-</html>
+
+<script>
+    let id = (location.search.substr(location.search.indexOf("?") + 1)).split("=")[1]
+
+    $(document).ready(function () {
+        $(".nav-item").children("a").removeClass("active")
+        // $(".nav.nav-pills>.nav-item:nth-child(2)>a").addClass("active")
+        $(".movieinfo").empty()
+        $(".commentlist").empty()
+        getinfo()
+        getcomment()
+    })
+
+    function getinfo() {
+        $.ajax({
+            type: "GET",
+            url: "/content",
+            data: {
+                'id': id
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    data = response['content']
+                    let title = data["title"]
+                    let year = data["year"]
+                    let type = data["type"]
+                    let desc = data['desc']
+                    let thumbnail = data['thumbnail']
+                    let comments = data['comment']
+                    if (thumbnail == "None" || thumbnail == "about:blank") {
+                        thumbnail = "..\\static\\none.jpg"
+                    }
+                    
+                    if (type == "영화 " || type == "영화 NETFLIX ORIGINAL") {
+                        let genre = data["genre"]
+                        let country = data["country"]
+                        let runtime = data["runtime"]
+                        let director = data["director"]
+                        let cast = data['cast']
+
+                        temp = `<img src="${thumbnail}" alt="${title}">
+                                <div class="rightblock">
+                                     <table class="txtinfo">
+                                        <tr>
+                                           <td colspan="2" class="title">${title}<span class="year">(${year})</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th>개요</th>
+                                            <td>${type} | ${genre} | ${country} | ${runtime}분</td>
+                                        </tr>
+                                        <tr>
+                                            <th>감독</th>
+                                            <td>${director}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>출연</th>
+                                            <td>${cast}</td>
+                                        </tr>
+                                    </table>
+                                    <div class="desc">
+                                        <span>줄거리</span>
+                                        <p>${desc}</p>
+                                    </div>
+                                </div>
+                               `
+
+                        $(".movieinfo").append(temp)
+                    }
+                    if (type == "드라마 " || type == "드라마 NETFLIX ORIGINAL") {
+                        let country = data["country"].split("드라마")[0]
+                        let cast = data['cast']
+                        temp = `<img src="${thumbnail}" alt="${title}">
+                                <div class="rightblock">
+                                     <table class="txtinfo">
+                                        <tr>
+                                           <td colspan="2" class="title">${title}<span class="year">(${year})</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th>개요</th>
+                                            <td>${type} | ${country}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>출연</th>
+                                            <td>${cast}</td>
+                                        </tr>
+                                    </table>
+                                    <div class="desc">
+                                        <span>줄거리</span>
+                                        <p>${desc}</p>
+                                    </div>
+                                </div>
+                               `
+                        $(".movieinfo").append(temp)
+                    }
+                    if (type == "쇼" || type == "쇼 NETFLIX ORIGINAL") {
+                        let category = data["category"]
+                        let cast = data['cast']
+                        temp = `<img src="${thumbnail}" alt="${title}">
+                                <div class="rightblock">
+                                     <table class="txtinfo">
+                                        <tr>
+                                           <td colspan="2" class="title">${title}<span class="year">(${year})</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th>개요</th>
+                                            <td>${type} | ${category}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>출연</th>
+                                            <td>${cast}</td>
+                                        </tr>
+                                    </table>
+                                    <div class="desc">
+                                        <span>줄거리</span>
+                                        <p>${desc}</p>
+                                    </div>
+                                </div>
+                               `
+                        $(".movieinfo").append(temp)
+                    }
+                    if (type == "다큐멘터리" || type == "애니메이션") {
+                        temp = `<img src="${thumbnail}" alt="${title}">
+                                <div class="rightblock">
+                                     <table class="txtinfo">
+                                        <tr>
+                                           <td colspan="2" class="title">${title}<span class="year">(${year})</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th>개요</th>
+                                            <td>${type}</td>
+                                        </tr>
+                                    </table>
+                                    <div class="desc">
+                                        <span>줄거리</span>
+                                        <p>${desc}</p>
+                                    </div>
+                                </div>
+                               `
+                        $(".movieinfo").append(temp)
+                    }
+
+                    if (comments) {
+                        for (let i = 0; i < comments.length; i++) {
+                            let comment = comments[i]
+                            let star = comment["star"]
+                            let text = comment["text"]
+                            let date = comment["date"]
+                            let temp = `<hr/><div class="star-and-date"><p>`
+                            for (let j = 0; j < star; j++) {
+                                temp += `<span class="on">★</span>`
+                            }
+                            for (let j = 0; j < (5 - star); j++) {
+                                temp += `<span>★</span>`
+                            }
+                            temp += `</p><p>${date}</p></div><p>${text}</p>`
+                            $(".commentlist").append(temp)
+                        }
+                    }
+                } else {
+                    alert('목록을 받아오지 못했습니다.')
+                }
+            }
+        })
+    }
+
+    $('#star a').click(function () {
+        $(this).parent().children("a").removeClass("on");
+        $(this).addClass("on").prevAll("a").addClass("on");
+        $("#star > span:nth-child(6)").empty();
+        $("#star > span:nth-child(6)").append($(this).attr("value"));
+    })
+
+    function postcomment() {
+        let star = $("#star > span:nth-child(6)").text()
+        let comment = $("#exampleFormControlTextarea1").val()
+        let today = new Date()
+        let year = today.getFullYear(); // 년도
+        let month = today.getMonth() + 1;  // 월
+        let day = today.getDate();  // 날짜
+        let date = year + "/" + month + "/" + day
+        if (star == '0') {
+            alert('평점은 1점 이상 클릭해 주세요!')
+            return
+        } else if (comment == '') {
+            alert('리뷰를 작성해 주세요!')
+            return
+        }
+        $.ajax({
+            type: "POST",
+            url: "/movie_comment",
+            data: {
+                'id_give': id,
+                'star_give': star,
+                'comment_give': comment,
+                'date_give': date
+            },
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    alert(response['msg'])
+                    window.location.reload();
+                } else {
+                    alert("작성 실패")
+                }
+            }
+        })
+    }
+
+    // function getcomment() {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "/movie_comment",
+    //         data: {
+    //             'id_give': id,
+    //         },
+    //         success: function (response) {
+    //             if (response["result"] == 'success') {
+    //                 let comments = response["comments"]
+    //                 if (comments != "None") {
+    //                     for (let i = 0; i < comments.length; i++) {
+    //                         let comment = comments[i]
+    //                         let star = comment["star"]
+    //                         let text = comment["text"]
+    //                         let date = comment["date"]
+    //                         let temp = `<hr/><div class="star-and-date"><p>`
+    //                         for (let j = 0; j < star; j++) {
+    //                             temp += `<span class="on">★</span>`
+    //                         }
+    //                         for (let j = 0; j < (5 - star); j++) {
+    //                             temp += `<span>★</span>`
+    //                         }
+    //                         temp += `</p><p>${date}</p></div><p>${text}</p>`
+    //                         $(".commentlist").append(temp)
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     })
+    // }
+
+</script>
+{% endblock %}
