@@ -10,13 +10,39 @@
         margin-top: 30px;
     }
 
-    #searchbar {
-        display: flex;
-        justify-content: flex-end;
-        width: calc(100vw - 80px);
+    #searchbar img {
+        max-height: 15px;
     }
 
-    .form-check{
+    #textsearch {
+        display: none;
+    }
+
+    #searchbar {
+        width: calc(100vw - 80px);
+        margin: auto;
+        display: flex;
+        justify-content: flex-end;
+        position: relative;
+        padding: 15px 0 0;
+        height: 50px;
+    }
+
+    .form__field {
+        font-family: inherit;
+        width: 200px;
+        border: 0;
+        border-bottom: 2px solid black;
+        margin-bottom: 10px;
+        outline: 0;
+        font-size: 10px;
+        color: black;
+        padding: 7px 0;
+        background: transparent;
+    }
+
+
+    .form-check {
         padding-left: 40px;
         /*font-family: 'Nanum Myeongjo', serif;*/
         font-size: 15px;
@@ -107,21 +133,31 @@
 
 {% block content %}
 <div id="main">
-    <div id="searchbar">
+    <div id='searchbar' class="form__group field">
+        <div id="textsearch">
+            <input type="input" class="form__field" placeholder="검색어를 입력하세요" name="search" id='search' required/>
+            <label for="search" class="form__label"></label>
+            <a id='searchicon' href="javascript:void(0)" onclick="searchtext()"><img src="../static/search.png"></a>
+        </div>
+        <a id='hideicon' onclick="showsearch()"><img src="../static/search.png"></a>
+
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="latest"
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
+                   value="latest"
                    checked="checked">
             <label class="form-check-label" for="flexRadioDefault1">
                 최신순
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="oldest">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
+                   value="oldest">
             <label class="form-check-label" for="flexRadioDefault2">
                 오래된순
             </label>
         </div>
     </div>
+
 
     <div id="movie_list">
         <div class="movie">
@@ -154,10 +190,10 @@
 <hr/>
 
 <script>
-
     let page = 1
     let size = 25
     let order = 'latest'
+    let keyword = $('.form__field').val()
 
     $(document).ready(function () {
         $(".nav-item").children("a").removeClass("active")
@@ -168,6 +204,7 @@
             let params = (location.search.substr(location.search.indexOf("?") + 1)).split("&")
             page = Number(params[0].split("=")[1])
             order = params[1].split("=")[1]
+            keyword = params[2].split("=")[1]
         }
 
         if (order == 'latest') {
@@ -181,22 +218,35 @@
 
     $("input[name='flexRadioDefault'][type='radio']").change(function () {
         order = this.value
-
-        window.open(`/search?page=1&order=${order}`, "_self")
+        window.open(`/search?page=1&order=${order}&keyword=${keyword}`, "_self")
 
     })
 
+    function showsearch() {
+        $('#textsearch').show()
+        $('#hideicon').hide()
+    }
+
+    function searchtext(){
+        keyword = $('.form__field').val()
+
+        window.open(`/search?page=1&order=${order}&keyword=${keyword}`, "_self")
+    }
+
 
     function getContents() {
+        console.log(keyword)
         $.ajax({
             type: "GET",
             url: "/contents",
             data: {
                 'page': page,
                 'size': size,
-                'order': order
+                'order': order,
+                'keyword': keyword
             },
             success: function (response) {
+                console.log(response)
                 if (response['result'] == 'success') {
                     $("#movie_list").empty()
                     $("#pagination").empty()
@@ -234,13 +284,13 @@
 
     function printPagination(total, page, order) {
         let totpage = Math.ceil(total / size)
-        let start = `<a href="/search?page=1&order=${order}">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
-        let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="/search?page=${totpage}&order=${order}">${totpage}</a>`
+        let start = `<a href="/search?page=1&order=${order}&keyword=${keyword}">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
+        let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="/search?page=${totpage}&order=${order}&keyword=${keyword}">${totpage}</a>`
 
         if (page === 1) {
             $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
         } else {
-            $("#pagination").append(`<a href="/search?page=${page - 1}&order=${order}">Prev</a>`)
+            $("#pagination").append(`<a href="/search?page=${page - 1}&order=${order}&keyword=${keyword}">Prev</a>`)
         }
         //prev 1...2 3 4 5 6 ...100 Next 만들기
         if (page <= 3) {
@@ -258,14 +308,14 @@
         if (page === totpage) {
             $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
         } else {
-            $("#pagination").append(`<a href="/search?page=${page + 1}&order=${order}">Next</a>`)
+            $("#pagination").append(`<a href="/search?page=${page + 1}&order=${order}&keyword=${keyword}">Next</a>`)
         }
     }
 
     function numbering(s, f, page) {
         for (let i = s; i <= f; i++) {
             let active = (page === i) ? 'active' : ''
-            let temp = `<a class="${active}" href="/search?page=${i}&order=${order}">${i}</a>`
+            let temp = `<a class="${active}" href="/search?page=${i}&order=${order}&keyword=${keyword}">${i}</a>`
             $("#pagination").append(temp)
         }
     }

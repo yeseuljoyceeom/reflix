@@ -49,15 +49,26 @@ def printcontents():
     page = int(request.args.get('page', 1))
     size = int(request.args.get('size', 28))
     order = request.args.get('order')
+    keyword = request.args.get('keyword')
     totalContents = db.totContents.count()
     n_skip = (page - 1) * size
 
-    if order == 'latest':
-        pageContents = list(
-            db.totContents.find({}, {"_id": False}).sort([('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
-    elif order == 'oldest':
-        pageContents = list(
-            db.totContents.find({}, {"_id": False}).sort([('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+    if keyword != '':
+        if order == 'latest':
+            pageContents = list(
+                db.totContents.find({'$or': [{'$regex': {'title': keyword}}, {'$regex': {'cast': keyword}},
+                                             {'$regex': {'director': keyword}}]}, {"_id": False}).sort(
+                    [('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
+        elif order == 'oldest':
+            pageContents = list(
+                db.totContents.find({'$or': [{'title': {'$regex': keyword}}]}, {"_id": False}).sort(
+                    [('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+    else:
+        if order == 'latest':
+           pageContents = list(db.totContents.find({}, {"_id": False}).sort([('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
+        elif order == 'oldest':
+           pageContents = list(db.totContents.find({}, {"_id": False}).sort([('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+
     return jsonify({'result': 'success', 'contents': pageContents, 'total': totalContents})
 
 
@@ -67,6 +78,7 @@ def printcontent():
     content = db.totContents.find_one({"contentId": id}, {"_id": False})
 
     return jsonify({'result': 'success', 'content': content})
+
 
 
 @app.route('/movie_comment', methods=["POST"])
