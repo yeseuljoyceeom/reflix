@@ -50,24 +50,154 @@ def printcontents():
     size = int(request.args.get('size', 28))
     order = request.args.get('order')
     keyword = request.args.get('keyword')
-    totalContents = db.totContents.count()
+    category = int(request.args.get('category', 1))
     n_skip = (page - 1) * size
+
+    def return_data(ctgr, ord):
+        if ctgr == 2:
+            ctgr = '영화'
+        elif ctgr == 3:
+            ctgr = '드라마'
+        elif ctgr == 4:
+            ctgr = '쇼'
+        elif ctgr == 5:
+            ctgr = '다큐멘터리'
+        elif ctgr == 6:
+            ctgr = '애니메이션'
+
+        if ord == 1:
+            ord = 1
+        else:
+            ord = -1
+
+        result = list(db.totContents.find({'$and': [{'type': {'$regex': ctgr}},
+                                                    {'$or': [{'title': {'$regex': keyword}},
+                                                             {'cast': {'$regex': keyword}},
+                                                             {'director': {'$regex': keyword}}]}]},
+                                          {"_id": False}).sort(
+            [('year', ord), ('_id', 1)]).skip(n_skip).limit(size))
+        totalContents = len(list(db.totContents.find({'$and': [{'type': {'$regex': ctgr}},
+                                                               {'$or': [{'title': {'$regex': keyword}},
+                                                                        {'cast': {'$regex': keyword}},
+                                                                        {'director': {'$regex': keyword}}]}]},
+                                                     {"_id": False})))
+        return [totalContents, result]
+
+    # return data w/o keyword
+    def return_data_wo_key(ctgr, ord):
+        if ctgr == 2:
+            ctgr = '영화'
+        elif ctgr == 3:
+            ctgr = '드라마'
+        elif ctgr == 4:
+            ctgr = '쇼'
+        elif ctgr == 5:
+            ctgr = '다큐멘터리'
+        elif ctgr == 6:
+            ctgr = '애니메이션'
+
+        if ord == 1:
+            ord = 1
+        else:
+            ord = -1
+
+        result = list(db.totContents.find({'type': {'$regex': ctgr}}, {"_id": False}).sort(
+            [('year', ord), ('_id', 1)]).skip(n_skip).limit(size))
+        totalContents = len(list(db.totContents.find({'type': {'$regex': ctgr}}, {"_id": False})))
+
+        return [totalContents, result]
 
     if keyword != '':
         if order == 'latest':
-            pageContents = list(
-                db.totContents.find({'$or': [{'$regex': {'title': keyword}}, {'$regex': {'cast': keyword}},
-                                             {'$regex': {'director': keyword}}]}, {"_id": False}).sort(
-                    [('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
+            if category == 1:
+                pageContents = list(
+                    db.totContents.find({'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
+                                                 {'director': {'$regex': keyword}}]}, {"_id": False}).sort(
+                        [('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
+                totalContents = db.totContents.count(
+                    {'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
+                             {'director': {'$regex': keyword}}]})
+            elif category == 2:
+                pageContents = return_data(2, -1)[1]
+                totalContents = return_data(2, -1)[0]
+            elif category == 3:
+                pageContents = return_data(3, -1)[1]
+                totalContents = return_data(3, -1)[0]
+            elif category == 4:
+                pageContents = return_data(4, -1)[1]
+                totalContents = return_data(4, -1)[0]
+            elif category == 5:
+                pageContents = return_data(5, -1)[1]
+                totalContents = return_data(5, -1)[0]
+            elif category == 6:
+                pageContents = return_data(6, -1)[1]
+                totalContents = return_data(6, -1)[0]
+
         elif order == 'oldest':
-            pageContents = list(
-                db.totContents.find({'$or': [{'title': {'$regex': keyword}}]}, {"_id": False}).sort(
-                    [('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+            if category == 1:
+                pageContents = list(
+                    db.totContents.find({'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
+                                                 {'director': {'$regex': keyword}}]}, {"_id": False}).sort(
+                        [('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+                totalContents = db.totContents.count(
+                    {'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
+                             {'director': {'$regex': keyword}}]})
+            elif category == 2:
+                pageContents = return_data(2, 1)[1]
+                totalContents = return_data(2, 1)[0]
+            elif category == 3:
+                pageContents = return_data(3, 1)[1]
+                totalContents = return_data(3, 1)[0]
+            elif category == 4:
+                pageContents = return_data(4, 1)[1]
+                totalContents = return_data(4, 1)[0]
+            elif category == 5:
+                pageContents = return_data(5, 1)[1]
+                totalContents = return_data(5, 1)[0]
+            elif category == 6:
+                pageContents = return_data(6, 1)[1]
+                totalContents = return_data(6, 1)[0]
     else:
         if order == 'latest':
-           pageContents = list(db.totContents.find({}, {"_id": False}).sort([('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
+            if category == 1:
+                pageContents = list(
+                    db.totContents.find({}, {"_id": False}).sort([('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
+                totalContents = db.totContents.count({})
+            elif category == 2:
+                pageContents = return_data_wo_key(2, -1)[1]
+                totalContents = return_data_wo_key(2, -1)[0]
+            elif category == 3:
+                pageContents = return_data_wo_key(3, -1)[1]
+                totalContents = return_data_wo_key(3, -1)[0]
+            elif category == 4:
+                pageContents = return_data_wo_key(4, -1)[1]
+                totalContents = return_data_wo_key(4, -1)[0]
+            elif category == 5:
+                pageContents = return_data_wo_key(5, -1)[1]
+                totalContents = return_data_wo_key(5, -1)[0]
+            elif category == 6:
+                pageContents = return_data_wo_key(6, -1)[1]
+                totalContents = return_data_wo_key(6, -1)[0]
         elif order == 'oldest':
-           pageContents = list(db.totContents.find({}, {"_id": False}).sort([('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+            if category == 1:
+                pageContents = list(
+                    db.totContents.find({}, {"_id": False}).sort([('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
+                totalContents = db.totContents.count({})
+            elif category == 2:
+                pageContents = return_data_wo_key(2, 1)[1]
+                totalContents = return_data_wo_key(2, 1)[0]
+            elif category == 3:
+                pageContents = return_data_wo_key(3, 1)[1]
+                totalContents = return_data_wo_key(3, 1)[0]
+            elif category == 4:
+                pageContents = return_data_wo_key(4, 1)[1]
+                totalContents = return_data_wo_key(4, 1)[0]
+            elif category == 5:
+                pageContents = return_data_wo_key(5, 1)[1]
+                totalContents = return_data_wo_key(5, 1)[0]
+            elif category == 6:
+                pageContents = return_data_wo_key(6, 1)[1]
+                totalContents = return_data_wo_key(6, 1)[0]
 
     return jsonify({'result': 'success', 'contents': pageContents, 'total': totalContents})
 
@@ -78,7 +208,6 @@ def printcontent():
     content = db.totContents.find_one({"contentId": id}, {"_id": False})
 
     return jsonify({'result': 'success', 'content': content})
-
 
 
 @app.route('/movie_comment', methods=["POST"])

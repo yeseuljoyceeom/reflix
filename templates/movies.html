@@ -7,11 +7,12 @@
     #main {
         display: flex;
         flex-direction: column;
-        margin-top: 30px;
+        margin-top: 40px;
     }
 
     #searchbar img {
         max-height: 15px;
+
     }
 
     #textsearch {
@@ -21,12 +22,15 @@
     #searchbar {
         width: calc(100vw - 80px);
         margin: auto;
+        margin-bottom: 5px;
         display: flex;
         justify-content: flex-end;
         position: relative;
         padding: 15px 0 0;
         height: 50px;
+        /*border: 1px solid;*/
     }
+
 
     .form__field {
         font-family: inherit;
@@ -46,6 +50,17 @@
         padding-left: 40px;
         /*font-family: 'Nanum Myeongjo', serif;*/
         font-size: 15px;
+        margin-top: 3px;
+    }
+
+
+    .form-select {
+        width: 100px;
+        margin: 0px 10px;
+        font-size: 10px;
+        height: 30px;
+        color: black;
+        border-color: black;
     }
 
     #movie_list {
@@ -53,11 +68,12 @@
         margin-left: auto;
         margin-right: auto;
         display: flex;
-        justify-content: space-around;
+        /*justify-content: space-between;*/
         align-content: space-around;
+        align-self: flex-end;
         flex-wrap: wrap;
         overflow: auto;
-        border: 1px solid black;
+        border-top: 1px solid black;
     }
 
     .movie {
@@ -134,12 +150,14 @@
 {% block content %}
 <div id="main">
     <div id='searchbar' class="form__group field">
+
         <div id="textsearch">
-            <input type="input" class="form__field" placeholder="검색어를 입력하세요" name="search" id='search' required/>
+            <input type="input" class="form__field" placeholder="제목, 감독, 배우를 검색하세요" name="search" id='search'
+                   required/>
             <label for="search" class="form__label"></label>
             <a id='searchicon' href="javascript:void(0)" onclick="searchtext()"><img src="../static/search.png"></a>
         </div>
-        <a id='hideicon' onclick="showsearch()"><img src="../static/search.png"></a>
+        <a id='hideicon' href='javascript:void(0)' onclick="showsearch()"><img src="../static/search.png"></a>
 
         <div class="form-check">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
@@ -156,6 +174,16 @@
                 오래된순
             </label>
         </div>
+
+        <select class="form-select" aria-label="Default select example">
+            <option value="1" selected>전체</option>
+            <option value="2">영화</option>
+            <option value="3">드라마</option>
+            <option value="4">예능</option>
+            <option value="5">다큐멘터리</option>
+            <option value="6">애니메이션</option>
+        </select>
+
     </div>
 
 
@@ -193,7 +221,8 @@
     let page = 1
     let size = 25
     let order = 'latest'
-    let keyword = $('.form__field').val()
+    let keyword = ''
+    let category = 1
 
     $(document).ready(function () {
         $(".nav-item").children("a").removeClass("active")
@@ -204,7 +233,8 @@
             let params = (location.search.substr(location.search.indexOf("?") + 1)).split("&")
             page = Number(params[0].split("=")[1])
             order = params[1].split("=")[1]
-            keyword = params[2].split("=")[1]
+            keyword = decodeURI(params[2].split("=")[1])
+            category = Number(params[3].split('=')[1])
         }
 
         if (order == 'latest') {
@@ -212,14 +242,40 @@
         } else {
             $("input[value='oldest']").prop("checked", true);
         }
+
+        if (category == 1) {
+            $(".form-select").val("1").prop("selected", true);
+        } else if (category == 2) {
+            $(".form-select").val("2").prop("selected", true);
+        } else if (category == 3) {
+            $(".form-select").val("3").prop("selected", true);
+        } else if (category == 4) {
+            $(".form-select").val("4").prop("selected", true);
+        } else if (category == 5) {
+            $(".form-select").val("5").prop("selected", true);
+        } else if (category == 6) {
+            $(".form-select").val("6").prop("selected", true);
+        }
+
+        if (keyword != '') {
+            $(".nav-item").children("a").removeClass("active")
+            $('#textsearch').show()
+            $('#hideicon').hide()
+            $('#textsearch >input').val(keyword)
+        }
         getContents()
 
     })
 
     $("input[name='flexRadioDefault'][type='radio']").change(function () {
         order = this.value
-        window.open(`/search?page=1&order=${order}&keyword=${keyword}`, "_self")
+        window.open(`/search?page=1&order=${order}&keyword=${keyword}&category=${category}`, "_self")
 
+    })
+
+    $(".form-select").change(function () {
+        category = Number(this.value)
+        window.open(`/search?page=1&order=${order}&keyword=${keyword}&category=${category}`, "_self")
     })
 
     function showsearch() {
@@ -227,10 +283,13 @@
         $('#hideicon').hide()
     }
 
-    function searchtext(){
+    function searchtext() {
         keyword = $('.form__field').val()
-
-        window.open(`/search?page=1&order=${order}&keyword=${keyword}`, "_self")
+        if (keyword == '') {
+            alert('검색어를 입력하세요')
+            return
+        }
+        window.open(`/search?page=1&order=${order}&keyword=${keyword}&category=${category}`, "_self")
     }
 
 
@@ -243,7 +302,8 @@
                 'page': page,
                 'size': size,
                 'order': order,
-                'keyword': keyword
+                'keyword': keyword,
+                'category': category
             },
             success: function (response) {
                 console.log(response)
@@ -284,38 +344,42 @@
 
     function printPagination(total, page, order) {
         let totpage = Math.ceil(total / size)
-        let start = `<a href="/search?page=1&order=${order}&keyword=${keyword}">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
-        let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="/search?page=${totpage}&order=${order}&keyword=${keyword}">${totpage}</a>`
+        let start = `<a href="/search?page=1&order=${order}&keyword=${keyword}&category=${category}">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
+        let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="/search?page=${totpage}&order=${order}&keyword=${keyword}&category=${category}">${totpage}</a>`
 
         if (page === 1) {
             $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
         } else {
-            $("#pagination").append(`<a href="/search?page=${page - 1}&order=${order}&keyword=${keyword}">Prev</a>`)
+            $("#pagination").append(`<a href="/search?page=${page - 1}&order=${order}&keyword=${keyword}&category=${category}">Prev</a>`)
         }
         //prev 1...2 3 4 5 6 ...100 Next 만들기
-        if (page <= 3) {
-            numbering(1, 5, page)
-            $("#pagination").append(finish)
-        } else if (page <= (totpage - 3)) {
-            $("#pagination").append(start)
-            numbering(page - 2, page + 2, page)
-            $("#pagination").append(finish)
+        if (totpage <= 7) {
+            numbering(1, totpage, page)
         } else {
-            $("#pagination").append(start)
-            numbering(totpage - 5, totpage, page)
+            if (page <= 3) {
+                numbering(1, 5, page)
+                $("#pagination").append(finish)
+            } else if (page <= (totpage - 3)) {
+                $("#pagination").append(start)
+                numbering(page - 2, page + 2, page)
+                $("#pagination").append(finish)
+            } else {
+                $("#pagination").append(start)
+                numbering(totpage - 5, totpage, page)
+            }
         }
 
         if (page === totpage) {
             $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
         } else {
-            $("#pagination").append(`<a href="/search?page=${page + 1}&order=${order}&keyword=${keyword}">Next</a>`)
+            $("#pagination").append(`<a href="/search?page=${page + 1}&order=${order}&keyword=${keyword}&category=${category}">Next</a>`)
         }
     }
 
     function numbering(s, f, page) {
         for (let i = s; i <= f; i++) {
             let active = (page === i) ? 'active' : ''
-            let temp = `<a class="${active}" href="/search?page=${i}&order=${order}&keyword=${keyword}">${i}</a>`
+            let temp = `<a class="${active}" href="/search?page=${i}&order=${order}&keyword=${keyword}&category=${category}">${i}</a>`
             $("#pagination").append(temp)
         }
     }
