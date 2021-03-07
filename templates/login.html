@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{{ super() }}
+
+{% block style %}
+<style>
+    #main {
+        margin-top: 80px;
+    }
+
+    .log-form {
+        margin: auto;
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        /*border: 1px solid;*/
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .log-form p {
+        text-align: center;
+        font-size: 15px;
+        color: dimgray;
+    }
+
+    .join-li {
+        list-style: none;
+        padding-left: 0px;
+        margin: 50px auto 0px auto;
+        width: 400px;
+        /*border: 1px solid;*/
+    }
+
+    .form-control {
+        border-radius: 0px;
+        margin: 10px auto;
+        width: 300px;
+    }
+
+    .log-form button {
+        border-radius: 0px;
+        width: 148px;
+    }
+
+    #footer {
+        margin: 10px auto;
+    }
+
+
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div class="log-form">
+        <h3>회원 로그인</h3>
+
+        <ul class="join-li">
+            <p>가입하신 아이디와 비밀번호를 입력해주세요.</p>
+            <li>
+                <input id='id' class="form-control" type="text" placeholder="아이디" aria-label="아이디" maxlength="30">
+            </li>
+            <li>
+                <input id='pw' class="form-control" type="password" placeholder="비밀번호" aria-label="비밀번호" maxlength="30">
+            </li>
+        </ul>
+        <div id="footer">
+            <button id='log' type="button" class="btn btn-outline-secondary" onclick="login()">로그인</button>
+            <button id='register' type="button" class="btn btn-outline-secondary" onclick="register()">회원가입</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function login() {
+        let id = $('#id').val()
+        let pw = $('#pw').val()
+
+        $.ajax({
+            type: "POST",
+            url: "/login_api",
+            data: {id_give: id, pw_give: pw},
+            success: function (response) {
+                if (response['result'] === 'success') {
+                    alert(response['msg'])
+                    location.href = '/'
+                } else {
+                    // 로그인이 안되면 에러메시지를 띄웁니다.
+                    alert(response['msg'])
+                }
+            }
+        })
+    }
+
+    function register(){
+        window.location.href='/register'
+    }
+</script>
+{% endblock %}

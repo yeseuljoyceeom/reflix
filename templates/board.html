@@ -5,7 +5,7 @@
 
 {% block style %}
 <style>
-    #posting, #postlist{
+    #posting, #postlist {
         font-family: 'Noto Sans KR', sans-serif;
     }
 
@@ -14,7 +14,8 @@
     }
 
     #main {
-        width: calc(100vw - 300px);
+        /*width: calc(100vw - 300px);*/
+        width: 80%;
         margin: 55px auto;
         display: flex;
         flex-direction: column;
@@ -134,6 +135,19 @@
     })
 
     function posting() {
+        $.ajax({
+            type: "GET",
+            url: "/check_if_login",
+            data: {},
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    return
+                } else {
+                    alert('로그인 후 이용해 주세요')
+                    window.location.href = '/login'
+                }
+            }
+        })
         $('#posting').show()
         $('#postlist').hide()
         $('#pagination').hide()

@@ -18,6 +18,10 @@
         border-bottom: 2px solid #353535;
     }
 
+    #modify {
+        float: right;
+    }
+
     .title {
         border-top: 2px solid #353535;
     }
@@ -27,13 +31,14 @@
     }
 
     .info {
+        display: flex;
+        justify-content: space-between;
         background-color: #F5F5F5;
-        text-align: right;
         border-top: 1px solid #DEDEDE;
     }
 
     .info > p {
-        margin: auto 5px;
+        margin: auto 10px;
         color: dimgray;
     }
 
@@ -59,6 +64,19 @@
         margin-top: 10px;
     }
 
+    .comment-cont {
+        display: flex;
+        flex-direction: column;
+        margin: 0px 5px;
+    }
+
+    .userinfo {
+        display: flex;
+        justify-content: space-between;
+        color: royalblue;
+        margin: 0px 10px;
+    }
+
 </style>
 {% endblock %}
 {% endblock %}
@@ -76,7 +94,9 @@
             <p>내용입니다.</p>
         </div>
     </div>
+    <div id="modify">
 
+    </div>
     <div id="comment">
         <p><img src="../static/comments.png">댓글: </p>
         <div class="mb-3">
@@ -101,6 +121,19 @@
         getPost()
     })
 
+
+    var getId = $.ajax({
+        type: "GET",
+        url: "/check_if_login",
+        data: {},
+        success: function (response) {
+            // if (response["result"] == 'success') {
+            // } else {
+            // }
+        }
+    })
+
+
     function getPost() {
         $.ajax({
             type: "GET",
@@ -115,12 +148,15 @@
                     let date = post['date']
                     let content = post['content']
                     let comments = post['comment']
+                    let user = post['user']
+                    let userId = post['userId']
                     if (comments) {
                         for (let i = 0; i < comments.length; i++) {
                             let comment = comments[i]
                             let date = comment['date']
                             let text = comment['comment']
-                            let temp = `<hr/><p>${date}</p><p>${text}</p>`
+                            let user = comment['user']
+                            let temp = `<hr/><div class="comment-cont"><div class="userinfo"><p>${user}</p><p>${date}</p></div><p>${text}</p></div>`
                             $('#comment_list').append(temp)
                         }
                     }
@@ -128,6 +164,7 @@
                                     <h4>${title}</h4>
                                 </div>
                                 <div class="info">
+                                    <p>${user}</p>
                                     <p>${date}</p>
                                 </div>
                                 <div class="content">
@@ -135,6 +172,30 @@
                                 </div>`
 
                     $('#showcontent').append(temp)
+
+                    var id = getId.done(function (response) {
+                        if (response['result'] === 'success') {
+                            if (response['userId'] === userId) {
+                                let temp = `<button type="button" class="btn btn-outline-dark" onclick="update_post()">수정</button>
+                                            <button type="button" class="btn btn-outline-dark" onclick="delete_post(${postId})">삭제</button>`
+                                $('#modify').append(temp)
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    function delete_post(postId) {
+        $.ajax({
+            type: "POST",
+            url: "/delete_post",
+            data: {'postId_give': postId},
+            success: function (response) {
+                if (response['result'] == 'success'){
+                    alert(response['msg'])
+                    window.location.href='/board'
                 }
             }
         })
@@ -147,7 +208,7 @@
         let month = today.getMonth() + 1;  // 월
         let day = today.getDate();  // 날짜
         let date = year + "/" + month + "/" + day
-        if (comment == ''){
+        if (comment == '') {
             alert('댓글을 입력해 주세요')
             return
         }
@@ -155,7 +216,7 @@
             type: "POST",
             url: "/board_comment",
             data: {
-                'id_give':postId,
+                'id_give': postId,
                 'comment_give': comment,
                 'date_give': date
             },

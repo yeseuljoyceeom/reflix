@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{{ super() }}
+
+{% block style %}
+<style>
+    #main {
+        margin-top: 80px;
+    }
+
+    .r-form {
+        margin: auto;
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    .join-li {
+        list-style: none;
+        padding-left: 0px;
+        margin: 50px 0px auto auto;
+        width: 400px;
+    }
+
+    .form-control {
+        border-radius: 0px;
+        margin-top: 10px;
+        width: 300px;
+    }
+
+    .join-li > li:nth-child(1) {
+        display: flex;
+    }
+
+    .join-li > li:nth-child(1) button {
+        border-radius: 0px;
+        font-size: 16px;
+        height: fit-content;
+        width: fit-content;
+        margin: 11px 0px 0px 5px;
+    }
+
+    #r-button {
+        border-radius: 0px;
+        width: 300px;
+    }
+
+    #footer {
+        margin: 10px auto;
+    }
+
+
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div class="r-form">
+        <h3>회원정보 입력</h3>
+        <ul class="join-li">
+            <li>
+                <input id='id' class="form-control" type="text" placeholder="아이디" aria-label="아이디" maxlength="30">
+                <button type="button" class="btn btn-outline-secondary" onclick="confirmId()">중복확인</button>
+            </li>
+            <li>
+                <input id='pw' class="form-control" type="password" placeholder="비밀번호" aria-label="비밀번호" maxlength="30">
+            </li>
+            <li>
+                <input id='confirm-pw' class="form-control" type="password" placeholder="비밀번호 확인" aria-label="비밀번호확인"
+                       maxlength="30">
+            </li>
+            <li>
+                <input id='nickname' class="form-control" type="text" placeholder="닉네임" aria-label="닉네임" maxlength="30">
+            </li>
+        </ul>
+        <div id="footer">
+            <button id='r-button' type="button" class="btn btn-outline-secondary" onclick="signup()">회원가입</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    let id_confirmed = false
+
+    function confirmId() {
+        let id = $('#id').val()
+        if (id == '') return alert('아이디를 입력해주세요')
+
+        $.ajax({
+            type: "GET",
+            url: "/confirmId",
+            data: {id_give: id},
+            success: function (response) {
+                if (response['result'] === 'success') {
+                    id_confirmed = true
+                    alert(response['msg'])
+                } else {
+                    alert(response['msg'])
+                }
+            }
+        })
+    }
+
+    function signup() {
+        let id = $('#id').val()
+        let pw = $('#pw').val()
+        let pw_check = $('#confirm-pw').val()
+        let nickname = $('#nickname').val()
+
+        if (id === '') return alert('아이디를 입력해주세요')
+        if (pw === '' || pw_check==='') return alert('비밀번호를 입력해주세요')
+        if (nickname === '') return alert('닉네임을 입력해주세요')
+
+        if (pw !== pw_check) return alert('비밀번호를 다시 확인해 주세요')
+        if (id_confirmed === false) return alert('중복된 아이디입니다.')
+
+        $.ajax({
+            type: "POST",
+            url: "/signup",
+            data: {id_give: id, pw_give: pw, nickname_give: nickname},
+            success: function (response) {
+                if (response['result'] === 'success') {
+                    alert(response['msg'])
+                    location.href = '/login'
+                } else {
+                    alert('회원가입 실패')
+                }
+            }
+        })
+
+    }
+</script>
+{% endblock %}
+
+
+
+
+
+
+

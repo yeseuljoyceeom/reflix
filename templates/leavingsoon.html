@@ -1,10 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "layout.html" %}
 
-</body>
-</html>
+{% block head %}
+{{ super() }}
+
+{% block style %}
+<style>
+    #main{
+        display: flex;
+        flex-direction: column;
+        width: calc(100vw - 200px);
+        margin: 50px auto;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-evenly;
+        border-top: 1px solid;
+        padding: 10px;
+    }
+
+    .container img {
+        width: 232px;
+        height: 336px;
+    }
+
+    .txtinfo {
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+
+    }
+
+    .txtinfo .title {
+        font-family: 'Black Han Sans', sans-serif;
+        font-size: 25px;
+    }
+
+    .txtinfo .year {
+        font-size: 20px;
+        margin-left: 10px;
+    }
+
+    .txtinfo th {
+        width: 70px;
+        padding-right: 10px;
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 20px;
+        color: dimgray;
+    }
+
+    .info button{
+        border: 1px solid black;
+    }
+
+    .info button>img{
+        max-height: 25px;
+        max-width: 25px;
+    }
+
+
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div class="container">
+        <img src="../static/none.jpg">
+        <div class="info">
+            <table class="txtinfo">
+                <tr>
+                    <td colspan="2" class="title">Title<span class="year">(2021)</span></td>
+                </tr>
+                <tr>
+                    <th>개요</th>
+                    <td>type | genre | country | 123분</td>
+                </tr>
+                <tr>
+                    <th>줄거리</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="2">desc</td>
+                </tr>
+
+            </table>
+            <button type="button" class="btn btn-light"><img src="../static/thumbsup.png">좋아요</button>
+        </div>
+    </div>
+    <div class="container">
+        <img src="../static/none.jpg">
+        <div class="info">
+            <table class="txtinfo">
+                <tr>
+                    <td colspan="2" class="title">Title<span class="year">(2021)</span></td>
+                </tr>
+                <tr>
+                    <th>개요</th>
+                    <td>type | genre | country | 123분</td>
+                </tr>
+                <tr>
+                    <th>줄거리</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="2">desc</td>
+                </tr>
+
+            </table>
+            <button type="button" class="btn btn-light"><img src="../static/thumbsup.png">좋아요</button>
+        </div>
+    </div>
+    <div class="container">
+        <img src="../static/none.jpg">
+        <div class="info">
+            <table class="txtinfo">
+                <tr>
+                    <td colspan="2" class="title">Title<span class="year">(2021)</span></td>
+                </tr>
+                <tr>
+                    <th>개요</th>
+                    <td>type | genre | country | 123분</td>
+                </tr>
+                <tr>
+                    <th>줄거리</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="2">desc</td>
+                </tr>
+
+            </table>
+            <button type="button" class="btn btn-light"><img src="../static/thumbsup.png">좋아요</button>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

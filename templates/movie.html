@@ -25,9 +25,7 @@
     }
 
     .rightblock {
-
         width: 500px;
-
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
@@ -88,15 +86,25 @@
         margin-top: 10px;
     }
 
-    .star-and-date {
+    .comment-cont{
         display: flex;
-        justify-content: space-between;
-        color: gainsboro;
+
     }
 
-    .star-and-date > p span.on {
+    .user-star {
+        color: gainsboro;
+        margin-right: 40px;
+    }
+
+    .user-star > p span.on {
         color: royalblue;
     }
+
+    .userinfo{
+        color: lightgray;
+    }
+
+
 
 </style>
 {% endblock %}
@@ -165,7 +173,7 @@
                         thumbnail = "..\\static\\none.jpg"
                     }
 
-                    if (type == "영화 " || type == "영화 NETFLIX ORIGINAL") {
+                    if (type.slice(0,2) == "영화") {
                         let genre = data["genre"]
                         let country = data["country"]
                         let runtime = data["runtime"]
@@ -200,7 +208,7 @@
 
                         $(".movieinfo").append(temp)
                     }
-                    if (type == "드라마 " || type == "드라마 NETFLIX ORIGINAL") {
+                    if (type.slice(0,3) == '드라마') {
                         let country = data["country"].split("드라마")[0]
                         let cast = data['cast']
                         temp = `<img src="${thumbnail}" alt="${title}">
@@ -226,7 +234,7 @@
                                `
                         $(".movieinfo").append(temp)
                     }
-                    if (type == "쇼" || type == "쇼 NETFLIX ORIGINAL") {
+                    if (type.slice(0,1) == '쇼') {
                         let category = data["category"]
                         let cast = data['cast']
                         temp = `<img src="${thumbnail}" alt="${title}">
@@ -279,14 +287,15 @@
                             let star = comment["star"]
                             let text = comment["text"]
                             let date = comment["date"]
-                            let temp = `<hr/><div class="star-and-date"><p>`
+                            let user = comment['user']
+                            let temp = `<hr/><div class="comment-cont"><div class="user-star"><p>`
                             for (let j = 0; j < star; j++) {
                                 temp += `<span class="on">★</span>`
                             }
                             for (let j = 0; j < (5 - star); j++) {
                                 temp += `<span>★</span>`
                             }
-                            temp += `</p><p>${date}</p></div><p>${text}</p>`
+                            temp += `</p></div><div><p class="userinfo">${user} | ${date}</p><p>${text}</p></div></div>`
                             $(".commentlist").append(temp)
                         }
                     }
@@ -302,6 +311,23 @@
         $(this).addClass("on").prevAll("a").addClass("on");
         $("#star > span:nth-child(6)").empty();
         $("#star > span:nth-child(6)").append($(this).attr("value"));
+    })
+
+    $("#exampleFormControlTextarea1").focus(function (){
+        $.ajax({
+            type: "GET",
+            url: "/check_if_login",
+            data: {
+            },
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    return
+                } else {
+                    alert('로그인 후 이용해 주세요')
+                    window.location.href = '/login'
+                }
+            }
+        })
     })
 
     function postcomment() {
