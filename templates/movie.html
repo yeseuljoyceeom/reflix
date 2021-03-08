@@ -162,7 +162,7 @@
             },
             success: function (response) {
                 if (response['result'] == 'success') {
-                    data = response['content']
+                    let data = response['content']
                     let title = data["title"]
                     let year = data["year"]
                     let type = data["type"]

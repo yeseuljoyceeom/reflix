@@ -363,6 +363,16 @@ def delete_post():
 
     return jsonify({'result': 'success', 'msg': '삭제 완료'})
 
+@app.route('/update_post', methods=["POST"])
+def update_post():
+    postId_receive = int(request.form['postId_give'])
+    updated_content = request.form['updated_content']
+    updated_title = request.form['updated_title']
+
+    db.board.update_one({'postId':postId_receive},{'$set':{"content":updated_content, 'title':updated_title}})
+
+    return jsonify({'result': 'success', 'msg': '수정 완료'})
+
 
 #로그인, 회원가입, 로그아웃
 @app.route('/confirmId', methods=["GET"])

@@ -7,7 +7,7 @@
 <style>
 
     #main {
-        width: calc(100vw - 300px);
+        width: 80%;
         margin: 50px auto;
     }
 
@@ -77,6 +77,12 @@
         margin: 0px 10px;
     }
 
+    #posting {
+        display: none;
+        width: 80%;
+        margin: 50px auto;
+    }
+
 </style>
 {% endblock %}
 {% endblock %}
@@ -108,7 +114,18 @@
     <div id="comment_list">
 
     </div>
+</div>
 
+<div id="posting">
+    <div class="mb-3">
+        <label for="title" class="form-label"></label>
+        <input type="text" class="form-control" id="title" placeholder="">
+    </div>
+    <div class="mb-3">
+        <textarea class="form-control" id="content" rows="3" placeholder=""></textarea>
+    </div>
+    <button type="button" class="btn btn-dark" onclick="cancelpost()">취소</button>
+    <button type="button" class="btn btn-dark" onclick="postcomplete()">완료</button>
 </div>
 
 
@@ -144,9 +161,9 @@
             success: function (response) {
                 if (response["result"] == 'success') {
                     let post = response["data"]
-                    let title = post['title']
+                    title = post['title']
                     let date = post['date']
-                    let content = post['content']
+                    content = post['content']
                     let comments = post['comment']
                     let user = post['user']
                     let userId = post['userId']
@@ -176,7 +193,7 @@
                     var id = getId.done(function (response) {
                         if (response['result'] === 'success') {
                             if (response['userId'] === userId) {
-                                let temp = `<button type="button" class="btn btn-outline-dark" onclick="update_post()">수정</button>
+                                let temp = `<button type="button" class="btn btn-outline-dark" onclick="update_post(${postId})">수정</button>
                                             <button type="button" class="btn btn-outline-dark" onclick="delete_post(${postId})">삭제</button>`
                                 $('#modify').append(temp)
                             }
@@ -187,15 +204,48 @@
         })
     }
 
+    function update_post(postId) {
+        $('#main').hide()
+        $('#posting').show()
+        $('#title').val(title)
+        $('#content').val(content)
+    }
+
+    function postcomplete() {
+        let updated_content = $('#content').val()
+        let updated_title = $('#title').val()
+        $.ajax({
+            type: "POST",
+            url: "/update_post",
+            data: {'postId_give': postId, 'updated_content': updated_content, 'updated_title': updated_title},
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    alert(response['msg'])
+                    window.location.href = `/boardpost?postId=${postId}`
+                }
+            }
+        })
+    }
+
+    function cancelpost() {
+        if (confirm("정말 취소하시겠습니까?")) {
+            $('#posting').hide()
+            $('#main').show()
+        } else {
+            return;
+        }
+    }
+
+
     function delete_post(postId) {
         $.ajax({
             type: "POST",
             url: "/delete_post",
             data: {'postId_give': postId},
             success: function (response) {
-                if (response['result'] == 'success'){
+                if (response['result'] == 'success') {
                     alert(response['msg'])
-                    window.location.href='/board'
+                    window.location.href = '/board'
                 }
             }
         })
