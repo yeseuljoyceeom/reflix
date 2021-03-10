@@ -8,7 +8,8 @@ app = Flask(__name__)
 
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
+client = MongoClient('mongodb://yeseul:d665112@localhost',27017)
+# client = MongoClient('localhost', 27017)
 db = client.dbreflix
 
 # jwt secret key
@@ -284,8 +285,18 @@ def post_movie_comment():
 
     user = g.user['nickname']
 
+    # 별점평균
+    temp = db.totContents.find_one({"contentId": contentId})
+    cmmts = temp['comment']
+    n = len(cmmts)
+    if n > 0:
+        cnt = 0
+        for cmmt in cmmts:
+            cnt += cmmt['star']
+        average = cnt / len(cmmts)
+
     db.totContents.update_one({"contentId": contentId},
-                              {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date}}})
+                              {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date}}, "$set":{"average":average}})
     return jsonify({'result': 'success', 'msg': '리뷰 작성 완료!'})
 
 
@@ -329,7 +340,7 @@ def post_post():
         'content': content,
         'date': date,
         'user': user,
-        'userId':userId
+        'userId': userId
     }
     db.board.insert_one(doc)
     return jsonify({'result': 'success', 'msg': '글 작성 완료!'})
@@ -356,12 +367,14 @@ def post_board_comment():
                         {"$push": {"comment": {'user': user, "comment": comment, "date": date}}})
     return jsonify({'result': 'success', 'msg': '댓글 작성 완료!'})
 
+
 @app.route('/delete_post', methods=["POST"])
 def delete_post():
     postId_receive = int(request.form['postId_give'])
-    db.board.delete_one({'postId':postId_receive})
+    db.board.delete_one({'postId': postId_receive})
 
     return jsonify({'result': 'success', 'msg': '삭제 완료'})
+
 
 @app.route('/update_post', methods=["POST"])
 def update_post():
@@ -369,12 +382,12 @@ def update_post():
     updated_content = request.form['updated_content']
     updated_title = request.form['updated_title']
 
-    db.board.update_one({'postId':postId_receive},{'$set':{"content":updated_content, 'title':updated_title}})
+    db.board.update_one({'postId': postId_receive}, {'$set': {"content": updated_content, 'title': updated_title}})
 
     return jsonify({'result': 'success', 'msg': '수정 완료'})
 
 
-#로그인, 회원가입, 로그아웃
+# 로그인, 회원가입, 로그아웃
 @app.route('/confirmId', methods=["GET"])
 def confirmId():
     id = request.args.get('id_give')
@@ -433,7 +446,7 @@ def check_if_login():
     user = g.user['nickname']
     userId = g.user['userId']
 
-    return jsonify({'result': 'success', 'user': user, 'userId':userId})
+    return jsonify({'result': 'success', 'user': user, 'userId': userId})
 
 
 @app.route('/logout', methods=["POST"])
@@ -443,6 +456,20 @@ def logout():
     res.delete_cookie(COOKIE_KEY)
 
     return res
+
+
+@app.route('/get_leavingsoon', methods=["GET"])
+def get_leavingsoon():
+    data = list(db.leavingsoon.find({}, {"_id": False}).sort([('d_leaving', 1), ('_id', 1)]))
+
+    return jsonify({'result': 'success', 'data': data})
+
+
+@app.route('/get_whatsnew', methods=["GET"])
+def get_whatsnew():
+    data = list(db.whatsnew.find({}, {"_id": False}).sort([('d_release', 1), ('_id', 1)]))
+
+    return jsonify({'result': 'success', 'data': data})
 
 
 if __name__ == '__main__':

@@ -29,6 +29,8 @@
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
+        /*border: 1px solid;*/
+        position: relative;
     }
 
     .txtinfo .title {
@@ -53,6 +55,24 @@
         font-family: 'Do Hyeon', sans-serif;
         font-size: 20px;
         color: dimgray;
+    }
+
+    .desc{
+        margin-bottom: 25px;
+    }
+
+    .average{
+        padding: 3px;
+        border: 1px solid;
+        width: fit-content;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        font-family: 'Do Hyeon', sans-serif;
+    }
+
+    .average > span{
+        color: royalblue;
     }
 
     #comment {
@@ -168,6 +188,7 @@
                     let type = data["type"]
                     let desc = data['desc']
                     let thumbnail = data['thumbnail']
+                    let average = data['average']
                     let comments = data['comment']
                     if (thumbnail == "None" || thumbnail == "about:blank") {
                         thumbnail = "..\\static\\none.jpg"
@@ -280,6 +301,8 @@
                                `
                         $(".movieinfo").append(temp)
                     }
+
+                    $('.rightblock').append(`<div class="average">Reflix 평점: <span class="int">${average}</span></div>`)
 
                     if (comments) {
                         for (let i = 0; i < comments.length; i++) {

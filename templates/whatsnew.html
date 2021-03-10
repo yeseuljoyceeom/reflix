@@ -5,11 +5,10 @@
 
 {% block style %}
 <style>
-    #main{
+    #main {
         display: flex;
         flex-direction: column;
-        width: calc(100vw - 200px);
-
+        width: 90%;
         margin: 50px auto;
     }
 
@@ -21,21 +20,35 @@
     }
 
     .container img {
-        width: 232px;
-        height: 336px;
+        width: 18vw;
+        height: 26vw;
+        /*width: 232px;*/
+        /*height: 336px;*/
     }
 
-    .txtinfo {
-        width: 500px;
+    .info {
+        width: 50%;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
+        justify-content: center;
+        /*border: 1px solid;*/
+    }
 
+    .type {
+        color: royalblue;
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 15px;
     }
 
     .txtinfo .title {
         font-family: 'Black Han Sans', sans-serif;
         font-size: 25px;
+        padding-bottom: 25px;
+    }
+
+    .title a {
+        text-decoration: none;
+        color: black;
     }
 
     .txtinfo .year {
@@ -44,20 +57,32 @@
     }
 
     .txtinfo th {
-        width: 70px;
+        width: 110px;
         padding-right: 10px;
         font-family: 'Do Hyeon', sans-serif;
         font-size: 20px;
         color: dimgray;
     }
 
-    .info button{
+    .desc {
+        margin-top: 20px;
+    }
+
+    .desc > span {
+        font-family: 'Do Hyeon', sans-serif;
+        font-size: 20px;
+        color: dimgray;
+    }
+
+    .info button {
+        margin-top: 25px;
+        width: fit-content;
         border: 1px solid black;
     }
 
-    .info button>img{
-        max-height: 25px;
-        max-width: 25px;
+    .info button > img {
+        height: 25px;
+        width: 25px;
     }
 
 
@@ -90,53 +115,63 @@
             <button type="button" class="btn btn-light"><img src="../static/thumbsup.png">좋아요</button>
         </div>
     </div>
-    <div class="container">
-        <img src="../static/none.jpg">
-        <div class="info">
-            <table class="txtinfo">
-                <tr>
-                    <td colspan="2" class="title">Title<span class="year">(2021)</span></td>
-                </tr>
-                <tr>
-                    <th>개요</th>
-                    <td>type | genre | country | 123분</td>
-                </tr>
-                <tr>
-                    <th>줄거리</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td rowspan="2">desc</td>
-                </tr>
 
-            </table>
-            <button type="button" class="btn btn-light"><img src="../static/thumbsup.png">좋아요</button>
-        </div>
-    </div>
-    <div class="container">
-        <img src="../static/none.jpg">
-        <div class="info">
-            <table class="txtinfo">
-                <tr>
-                    <td colspan="2" class="title">Title<span class="year">(2021)</span></td>
-                </tr>
-                <tr>
-                    <th>개요</th>
-                    <td>type | genre | country | 123분</td>
-                </tr>
-                <tr>
-                    <th>줄거리</th>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td rowspan="2">desc</td>
-                </tr>
-
-            </table>
-            <button type="button" class="btn btn-light"><img src="../static/thumbsup.png">좋아요</button>
-        </div>
-    </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#main").empty()
+        $(".nav-item").children("a").removeClass("active")
+        $(".nav.nav-pills>.nav-item:nth-child(3)>a").addClass("active")
+        getdata()
+
+    })
+
+    function getdata() {
+        $.ajax({
+            type: "GET",
+            url: "/get_whatsnew",
+            data: {},
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    let data = response['data']
+                    for (let i = 0; i < data.length; i++) {
+                        let movie = data[i]
+                        let title = movie['title']
+                        let thumbnail = movie['thumbnail']
+                        let desc = movie['desc']
+                        let year = movie['year']
+                        let type = movie['type']
+                        let contentId = movie['contentId']
+                        let leavingdate = movie['d_leaving']
+                        let temp = `
+                                <div class="container">
+                                    <a href="/movie?contentID=${contentId}"><img src="${thumbnail}"></a>
+                                    <div class="info">
+                                        <p class="type">${type}</p>
+                                        <table class="txtinfo">
+                                            <tr>
+                                                <td colspan="2" class="title"><a href="/movie?contentID=${contentId}">${title}</a><span class="year">(${year})</span></td>
+                                            </tr>
+                                            <tr>
+                                                <th>종료되는 날 :</th>
+                                                <td>${leavingdate}</td>
+                                            </tr>
+                                        </table>
+                                        <div class="desc">
+                                            <span>줄거리</span>
+                                            <p>${desc}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `
+                        $("#main").append(temp)
+                    }
+                }
+            }
+        })
+    }
+</script>
 
 
 {% endblock %}

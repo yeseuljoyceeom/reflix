@@ -19,7 +19,7 @@
     }
 
     #searchbar {
-        width: calc(100vw - 80px);
+        width: 90%;
         margin: auto;
         margin-bottom: 5px;
         display: flex;
@@ -63,7 +63,7 @@
     }
 
     #movie_list {
-        width: calc(100vw - 80px);
+        width: 90%;
         margin-left: auto;
         margin-right: auto;
         display: flex;
@@ -114,12 +114,22 @@
         margin-top: 10px;
     }
 
-    .movie-desc > p:nth-child(1) {
+    .movie-desc > div:nth-child(1) {
         /*margin-top: 4px;*/
+        margin-right: 10px;
+        display: flex;
+        justify-content: space-between;
         color: royalblue;
         font-size: 12px;
         text-align: left;
+    }
 
+    .movie-desc > div > p:nth-child(2){
+        font-size: 15px;
+    }
+
+    .movie-desc > div > p:nth-child(2) > span{
+        color: black;
     }
 
     .movie-desc > p:nth-child(2) {
@@ -153,6 +163,73 @@
     .currentpage {
         pointer-events: none;
         cursor: default;
+    }
+
+    @media (max-width: 625px) {
+
+
+        #movie_list {
+            width: 100vw;
+        }
+
+        .movie {
+            width: calc(100% / 5);
+            justify-content: space-around;
+            height: fit-content;
+            margin-top: 10px;
+        }
+
+        .movie img {
+            width: 100%;
+            height: auto;
+
+        }
+
+        .movie-desc > p:nth-child(1) {
+            /*margin-top: 4px;*/
+            color: royalblue;
+            font-size: 10px;
+            text-align: left;
+
+        }
+
+        .movie-desc > p:nth-child(2) {
+            font-size: 12px;
+            /*text-align: center;*/
+        }
+
+        #hideicon {
+            display: none;
+        }
+
+        #textsearch {
+            display: block;
+        }
+
+        #searchbar{
+            width: 100vw;
+            display: flex;
+            align-items: stretch;
+        }
+
+        #textsearch{
+            width: 60%;
+            padding-left: 5px;
+        }
+
+        .form__field{
+            width: 70%;
+        }
+
+        .form-check{
+            font-size: 10px;
+            width: 20%;
+            padding-left: 5px;
+        }
+
+        .form-select{
+            width: 20%;
+        }
     }
 </style>
 {% endblock %}
@@ -202,27 +279,7 @@
 
 
     <div id="movie_list">
-        <div class="movie">
-            <img src="..\static\filmreel.png" class="card-img" alt="...">
-            <div class="movie-desc">
-                <p class="movie-type">영화</p>
-                <p class="movie-title">승리호</p>
-            </div>
-        </div>
-        <div class="movie">
-            <img src="..\static\filmreel.png" class="card-img" alt="...">
-            <div class="movie-desc">
-                <p class="movie-type">영화</p>
-                <p class="movie-title">승리호</p>
-            </div>
-        </div>
-        <div class="movie">
-            <img src="..\static\filmreel.png" class="card-img" alt="...">
-            <div class="movie-desc">
-                <p class="movie-type">영화</p>
-                <p class="movie-title">승리호</p>
-            </div>
-        </div>
+
     </div>
 </div>
 <hr/>
@@ -342,13 +399,14 @@
             let type = data[i]['type'].split(" ")[0]
             let id = data[i]['contentId']
             let thumbnail = data[i]['thumbnail']
+            let average = data[i]['average']
             if (thumbnail == 'None') {
                 thumbnail = '..\\static\\none.jpg'
             }
             let temp = `<div class="movie" onclick="">
                                                 <a href = "/movie?contentID=${id}" ><img src="${thumbnail}" class="card-img" alt="${title}" /></a>
                                                 <div class="movie-desc">
-                                                    <p class="movie-type">${type}</p>
+                                                    <div class="type-star"><p>${type}</p><p>★ <span>${average}</span></p></div>
                                                     <p class="movie-title">${title}</p>
                                                 </div>
                                             </div>`

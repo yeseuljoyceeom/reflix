@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
+localclient = MongoClient('localhost', 27017)
+client = MongoClient('mongodb://yeseul:d665112@3.35.218.93', 27017)
+localdb = localclient.dbreflix
 db = client.dbreflix
 
 headers = {
@@ -48,7 +50,7 @@ def get_netflix_list():
 # 다음에 재검색해서 나머지 정보들 가져오기
 # 검색하기 쉽게 우선 데이터를 드라마, 영화, 쇼로 나눠 놓는
 def classify_type():
-    contents=[]
+    contents = []
     """types = list(db.movies.aggregate([
         {"$group": {
             "_id": "$type",
@@ -73,11 +75,11 @@ def classify_type():
 # 다음영화사이트에 코드번호로 재검색
 # 나머지 정보들 가져오기
 def getmovieinfo():
-    movie = []
-    cnt = 5326
+    movies = ['겟아웃', '시신령:음양사', '싱린의원']
+    cnt = 5368
     base_url = "https://search.daum.net/search?w=tot&DA=YZR&t__nil_searchbox=btn&sug=&sugo=&sq=&o=&q="
 
-    for m in movie:
+    for m in movies:
         # for i in range(10):
         if len(list(db.totContents.find({"title": {"$regex": m}}, {'_id': False}))) == 0:
             title = m
@@ -172,17 +174,19 @@ def getmovieinfo():
                     'year': year
                 }
 
-            db.totContents.insert_one(doc)
+            db.whatsnew.insert_one(doc)
+            localdb.whatsnew.insert_one(doc)
             print(doc)
             cnt += 1
 
 
+
 def getdramainfo():
-    drama = ['운석전', '뉴 암스테르담', '결혼작사 이혼작곡','손 the guest','루갈','구해줘','도시괴담','배가본드','싸우자 귀신아','빙의','나쁜 녀석들','우리 사랑했을까','우아한 가']
-    cnt = 5357
+    dramas = ['좋아하면 울리는 2', '나빌레라']
+    cnt = 5371
 
     base_url = "https://search.daum.net/search?w=tot&DA=YZR&t__nil_searchbox=btn&sug=&sugo=&sq=&o=&q="
-    for d in drama:
+    for d in dramas:
         if len(list(db.totContents.find({"title": {"$regex": d}}, {'_id': False}))) != 0:
             continue
         try:
@@ -243,20 +247,21 @@ def getdramainfo():
             year = 'None'
 
         finally:
-            doc={
+            doc = {
                 'title': title,
                 'type': '드라마',
-                'country':country,
-                'thumbnail':thumbnail,
-                'cast':cast,
-                'desc':desc,
-                'year':year,
-                'contentId':cnt
+                'country': country,
+                'thumbnail': thumbnail,
+                'cast': cast,
+                'desc': desc,
+                'year': year,
+                'contentId': cnt
             }
 
-        db.totContents.insert_one(doc)
+        db.whatsnew.insert_one(doc)
+        localdb.whatsnew.insert_one(doc)
         print(doc)
-        cnt+=1
+        cnt += 1
 
 
 
@@ -264,7 +269,13 @@ def getdramainfo():
 # db.collection.update_many({},{"$rename":{"oldName":"newName"}}) renmae field
 # db.collection.update_many({},{"$unset":{"filedName":1}}) delete field
 
+# leaving soon
+# dramas = ['신이라 불리는 사나이', '낮과밤','카인과 아벨']
+# animation = ['요괴워치', '이나 미나 디카', '로보카 폴리', '오스카의 오아시스']
 
+# temp = db.leavingsoon.find()
+# localdb.leavingsoon.insert_many(temp)
 
+# what's new
 
 
