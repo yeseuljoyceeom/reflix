@@ -7,11 +7,12 @@
 <style>
     #main {
         margin-top: 80px;
+        width: 100vw;
     }
 
     .log-form {
         margin: auto;
-        width: 500px;
+        width: 50%;
         display: flex;
         flex-direction: column;
         /*border: 1px solid;*/
@@ -31,23 +32,32 @@
         list-style: none;
         padding-left: 0px;
         margin: 50px auto 0px auto;
-        width: 400px;
+        width: 100%;
         /*border: 1px solid;*/
     }
 
     .form-control {
         border-radius: 0px;
         margin: 10px auto;
-        width: 300px;
+        width: 50%;
     }
 
     .log-form button {
         border-radius: 0px;
-        width: 148px;
+        width: 50%;
+        font-size: 13px;
     }
 
     #footer {
+        display: flex;
         margin: 10px auto;
+        width: 50%;
+    }
+
+    @media (max-width: 625px) {
+        .log-form{
+            width: 90%;
+        }
     }
 
 
@@ -70,7 +80,7 @@
             </li>
         </ul>
         <div id="footer">
-            <button id='log' type="button" class="btn btn-outline-secondary" onclick="login()">로그인</button>
+            <button id='log' type="button" class="btn btn-secondary" onclick="login()">로그인</button>
             <button id='register' type="button" class="btn btn-outline-secondary" onclick="register()">회원가입</button>
         </div>
 
@@ -79,6 +89,10 @@
 </div>
 
 <script>
+    <!--previous page-->
+    let pp = (location.search.substr(location.search.indexOf("?") + 1)).split("=")[1]
+    console.log(pp)
+
     function login() {
         let id = $('#id').val()
         let pw = $('#pw').val()
@@ -90,7 +104,14 @@
             success: function (response) {
                 if (response['result'] === 'success') {
                     alert(response['msg'])
-                    location.href = '/'
+                    if (pp == null || pp=='b'){
+                        location.href = '/board'
+                    } else if (pp=='i'){
+                        location.href = '/'
+                    } else{
+                        location.href = `/movie?contentID=${pp}`
+                    }
+
                 } else {
                     // 로그인이 안되면 에러메시지를 띄웁니다.
                     alert(response['msg'])

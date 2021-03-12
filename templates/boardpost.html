@@ -5,6 +5,9 @@
 
 {% block style %}
 <style>
+    *{
+        font-family: 'LotteMartDream';
+    }
 
     #main {
         width: 80%;
@@ -20,6 +23,7 @@
 
     #modify {
         float: right;
+        margin-top: 5px;
     }
 
     .title {
@@ -65,16 +69,22 @@
     }
 
     .comment-cont {
+        width: 95%;
         display: flex;
         flex-direction: column;
-        margin: 0px 5px;
+        margin: 15px auto;
+        border-top: 1px solid lightgray;
+    }
+
+    .comment-cont p {
+        margin: 5px 10px;
     }
 
     .userinfo {
         display: flex;
         justify-content: space-between;
-        color: royalblue;
-        margin: 0px 10px;
+        color: dimgray;
+        /*margin: 0px 10px;*/
     }
 
     #posting {
@@ -82,6 +92,12 @@
         width: 80%;
         margin: 50px auto;
     }
+
+     @media (max-width: 625px) {
+         *{
+             font-size: 10px;
+         }
+     }
 
 </style>
 {% endblock %}
@@ -132,6 +148,9 @@
 <script>
     let postId = (location.search.substr(location.search.indexOf("?") + 1)).split("=")[1]
     $(document).ready(function () {
+        if (postId == null) {
+            window.location.href = '/'
+        }
         $(".nav-item").children("a").removeClass("active")
         $('#showcontent').empty()
         $('#comment_list').empty()
@@ -173,7 +192,7 @@
                             let date = comment['date']
                             let text = comment['comment']
                             let user = comment['user']
-                            let temp = `<hr/><div class="comment-cont"><div class="userinfo"><p>${user}</p><p>${date}</p></div><p>${text}</p></div>`
+                            let temp = `<div class="comment-cont"><div class="userinfo"><p>${user}</p><p>${date}</p></div><p>${text}</p></div>`
                             $('#comment_list').append(temp)
                         }
                     }

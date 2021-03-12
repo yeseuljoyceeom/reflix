@@ -5,8 +5,15 @@
 
 {% block style %}
 <style>
+
     #posting, #postlist {
-        font-family: 'Noto Sans KR', sans-serif;
+        /*font-family: 'Noto Sans KR', sans-serif;*/
+        font-family: 'LotteMartDream';
+    }
+
+    .table th {
+        font-weight: bold;
+        font-family: 'Y_Spotlight';
     }
 
     #posting {
@@ -71,6 +78,20 @@
         cursor: default;
     }
 
+    @media (max-width: 625px) {
+        * {
+            font-size: 10px;
+        }
+
+        #main {
+            margin: 10px auto;
+        }
+
+        #pagination a {
+            font-size: 13px;
+        }
+    }
+
 </style>
 {% endblock %}
 {% endblock %}
@@ -131,6 +152,9 @@
         $(".nav.nav-pills>.nav-item:nth-child(5)>a").addClass("active")
         $("#post-table tbody").empty()
         $("#pagination").empty()
+        if ((location.search.substr(location.search.indexOf("?") + 1))) {
+            page = Number((location.search.substr(location.search.indexOf("?") + 1)).split("=")[1])
+        }
         getPost(page)
     })
 
@@ -144,7 +168,7 @@
                     return
                 } else {
                     alert('로그인 후 이용해 주세요')
-                    window.location.href = '/login'
+                    window.location.href = '/login?pp=b'
                 }
             }
         })
@@ -234,14 +258,15 @@
     }
 
     function printPagination(total, page) {
+
         let totpage = Math.ceil(total / size)
         let start = `<a href="#" onclick="getPost(1)">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
         let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="#" onclick="getPost(${totpage})">${totpage}</a>`
 
         if (page === 1) {
-            $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
+            $("#pagination").append(`<a href="#" class='currentpage'>Prev</a>`)
         } else {
-            $("#pagination").append(`<a href="#" onclick="getPost(${page - 1})">Prev</a>`)
+            $("#pagination").append(`<a href="/board?p=${page - 1}">Prev</a>`)
         }
         //prev 1...2 3 4 5 6 ...100 Next 만들기
 
@@ -262,19 +287,48 @@
         }
 
         if (page === totpage) {
-            $("#pagination").append(`<a href="#" class='currentpage' onclick="">Next</a>`)
+            $("#pagination").append(`<a href="#" class='currentpage'>Next</a>`)
         } else {
-            $("#pagination").append(`<a href="#" onclick="getPost(${page + 1})">Next</a>`)
+            $("#pagination").append(`<a href="/board?p=${page + 1}">Next</a>`)
         }
     }
 
     function numbering(s, f, page) {
         for (let i = s; i <= f; i++) {
             let active = (page === i) ? 'active' : ''
-            let temp = `<a href="#" class="${active}" onclick="getPost(${i})">${i}</a>`
+            let temp = `<a href="/board?p=${i}" class="${active}">${i}</a>`
             $("#pagination").append(temp)
         }
     }
+
+
+    // function printPagination(total, page) {
+    //   let totpage = Math.ceil(total / size)
+    //   let start = `<a href="#" onclick="getPost(1)">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
+    //   let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="#" onclick="getPost(${totpage})">${totpage}</a>`
+    //
+    //   if (page === 1) {
+    //       $("#pagination").append(`<a href="#" class='currentpage' onclick="">Prev</a>`)
+    //   } else {
+    //       $("#pagination").append(`<a href="/board?p=${page - 1}" onclick="getPost(${page - 1})">Prev</a>`)
+    //   }
+    //   //prev 1...2 3 4 5 6 ...100 Next 만들기
+    //
+    //   if (totpage <= 7) {
+    //       numbering(1, totpage, page)
+    //   } else {
+    //       if (page <= 3) {
+    //           numbering(1, 5, page)
+    //           $("#pagination").append(finish)
+    //       } else if (page <= (totpage - 3)) {
+    //           $("#pagination").append(start)
+    //           numbering(page - 2, page + 2, page)
+    //           $("#pagination").append(finish)
+    //       } else {
+    //           $("#pagination").append(start)
+    //           numbering(totpage - 5, totpage, page)
+    //       }
+    //   }
 
 
 </script>

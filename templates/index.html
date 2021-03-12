@@ -21,6 +21,11 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
 
+    <!--    font-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;800&family=Nanum+Gothic:wght@700;800&family=Noto+Sans+KR:wght@500;700&family=Nanum+Myeongjo:wght@800&family=Sunflower:wght@300&family=Gothic+A1:wght@200&family=Black+Han+Sans&family=Do+Hyeon&family=Abril+Fatface&display=swap"
+          rel="stylesheet">
+
     <title>Reflix - 넷플릭스의 모든 것</title>
 
     <style>
@@ -48,11 +53,11 @@
 
         #carouselExampleIndicators {
             width: 100vw;
-            height: 500px;
+            height: fit-content;
         }
 
         .carousel-inner img {
-            height: 498px;
+            height: 34vw;
             object-fit: cover;
             background-color: black;
         }
@@ -69,6 +74,83 @@
             max-heigh: 150px;
             height: 150px;
             width: calc(100vw / 8);
+        }
+
+        .nav {
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-item:nth-child(1) {
+            border-left: 0px;
+        }
+
+        .nav-item {
+            /*border: 1px solid;*/
+            width: calc(100vw / 4);
+            border: 2px solid black;
+            border-right: 0px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: black;
+            /*background-color: black;*/
+            font-family: 'Do Hyeon', sans-serif;
+            font-size: 15px;
+            text-align: center;
+            margin: auto;
+        }
+
+
+        .nav-link img {
+            max-width: 30px;
+            max-height: 30px;
+            margin-right: 10px;
+        }
+
+        .logout {
+            max-width: 20px;
+            max-height: 20px;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 625px) {
+            #logo img {
+                width: 60px;
+                height: auto;
+            }
+
+            #logo {
+                margin: 5px 10px;
+            }
+
+            .nav-link {
+                font-size: 10px;
+            }
+
+            .nav-link img {
+                max-width: 15px;
+                max-height: 15px;
+                /*margin-right: 50%;*/
+                margin-left: 40%;
+                margin-right: 50%;
+            }
+
+            #login {
+                font-size: 10px;
+            }
+
+            #carouselExampleIndicators{
+                height: fit-content;
+            }
+
+            .carousel-inner img {
+                height: 50vw;
+                object-fit: contain;
+                background-color: black;
+            }
         }
 
     </style>
@@ -120,10 +202,36 @@
 
     <!-- menu -->
     <div id="menu">
-        <a href="/search"><img src="..\static\filmreel.png"></a>
-        <img src="..\static\filmreel.png">
-        <img src="..\static\filmreel.png">
-        <img src="..\static\filmreel.png">
+        <nav>
+            <ul class="nav nav-pills">
+
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/search"><img src="../static/netflix.png">영화검색</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/whatsnew"><img src="../static/new-products-label.png">Upcoming</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/leavingsoon"><img src="../static/alarm-clock.png">Leaving Soon</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/board"><img src="../static/popcorn.png">자유게시판</a>
+                </li>
+                <!--
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+                -->
+            </ul>
+        </nav>
+
+        <!--        <a href="/search">-->
+        <!--            <button type="button" class="btn btn-dark">Dark</button>-->
+        <!--        </a>-->
+        <!--        <button type="button" class="btn btn-dark">Dark</button>-->
+        <!--        <button type="button" class="btn btn-dark">Dark</button>-->
+        <!--        <button type="button" class="btn btn-dark">Dark</button>-->
+        <!--        <img src="..\static\filmreel.png">-->
     </div>
 </div>
 
@@ -138,10 +246,10 @@
             success: function (response) {
                 if (response["result"] == 'success') {
                     let user = response['user']
-                    let temp = `<p>🍿${user}님🍿 | <a href="javascript:void(0)" onclick="logout()">로그아웃</a></p>`
+                    let temp = `<p>🍿${user}님🍿 | <a href="javascript:void(0)" onclick="logout()"><img class="logout" src="../static/exit.png">로그아웃</a></p>`
                     $('#login').append(temp)
                 } else {
-                    let temp = `<p><a href="/login">로그인</a> | <a href="/register">회원가입</a></p>`
+                    let temp = `<p><a href="/login?pp=i">로그인</a> | <a href="/register">회원가입</a></p>`
                     $('#login').append(temp)
                 }
             }

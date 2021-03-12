@@ -32,6 +32,14 @@
     <title>Reflix - 넷플릭스의 모든 것</title>
 
     <style>
+
+        @font-face {
+            font-family: 'LotteMartDream';
+            font-style: normal;
+            font-weight: 400;
+            src: url('//cdn.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff2') format('woff2'), url('//cdn.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff') format('woff');
+        }
+
         @font-face {
             font-family: 'Cafe24Dangdanghae';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.2/Cafe24Dangdanghae.woff') format('woff');
@@ -42,6 +50,20 @@
         @font-face {
             font-family: 'Cafe24Danjunghae';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Danjunghae.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Y_Spotlight';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/Y_Spotlight.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'InfinitySans-RegularA1';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/InfinitySans-RegularA1.woff') format('woff');
             font-weight: normal;
             font-style: normal;
         }
@@ -69,14 +91,16 @@
 
         .nav-item > a {
             color: black;
-            font-family: 'Nanum Myeongjo', serif;
-
+            /*font-family: 'Nanum Myeongjo', serif;*/
+            font-family: 'Do Hyeon', sans-serif;
+            font-size: 18px;
         }
 
         .nav-pills .nav-link.active {
             background-color: black;
             pointer-events: none;
             cursor: default;
+            padding: 10px;
         }
 
         #navbar {
@@ -86,13 +110,33 @@
         }
 
         @media (max-width: 625px) {
+            #logo img {
+                width: 60px;
+                height: auto;
+            }
+
+            #logo {
+                margin: 5px 10px;
+            }
+
             #navbar {
                 display: flex;
                 flex-direction: column;
                 height: fit-content;
-                margin: auto;
+                /*margin: 0px auto;*/
+                /*border: 1px solid;*/
+            }
+
+            nav {
+                /*border: 1px solid;*/
+                /*width: 100vw;*/
+                margin: 0px auto;
+            }
+
+            .nav-pills a {
                 font-size: 10px;
             }
+
         }
 
 
@@ -114,10 +158,10 @@
                     <a class="nav-link" aria-current="page" href="/search">영화검색</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/whatsnew">Upcoming</a>
+                    <a class="nav-link" href="/whatsnew">UPCOMING</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/leavingsoon">Leaving Soon</a>
+                    <a class="nav-link" href="/leavingsoon">LEAVING SOON</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/board">자유게시판</a>

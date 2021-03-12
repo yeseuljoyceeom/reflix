@@ -64,8 +64,13 @@
         color: dimgray;
     }
 
+    .txtinfo tr:nth-child(2) td {
+        font-family: 'LotteMartDream';
+    }
+
     .desc {
         margin-top: 20px;
+        font-family: 'LotteMartDream';
     }
 
     .desc > span {
@@ -85,6 +90,41 @@
         width: 25px;
     }
 
+    @media (max-width: 625px) {
+
+         .txtinfo .title{
+             font-size: 15px;
+         }
+
+         .txtinfo .year{
+             font-size: 15px;
+         }
+
+         .type{
+             font-size: 10px;
+         }
+
+         .txtinfo th{
+             font-size: 15px;
+             /*padding-right: 0px;*/
+             /*border: 1px solid;*/
+             width: fit-content;
+         }
+
+         .txtinfo tr:nth-child(2) td{
+             font-size: 10px;
+         }
+
+         .desc > span {
+             font-size: 15px;
+         }
+
+         .desc p{
+             font-size: 10px;
+         }
+
+
+     }
 
 </style>
 {% endblock %}
@@ -143,10 +183,10 @@
                         let year = movie['year']
                         let type = movie['type']
                         let contentId = movie['contentId']
-                        let leavingdate = movie['d_leaving']
+                        let releasedate = movie['d_release']
                         let temp = `
                                 <div class="container">
-                                    <a href="/movie?contentID=${contentId}"><img src="${thumbnail}"></a>
+                                    <img src="${thumbnail}">
                                     <div class="info">
                                         <p class="type">${type}</p>
                                         <table class="txtinfo">
@@ -154,8 +194,8 @@
                                                 <td colspan="2" class="title"><a href="/movie?contentID=${contentId}">${title}</a><span class="year">(${year})</span></td>
                                             </tr>
                                             <tr>
-                                                <th>종료되는 날 :</th>
-                                                <td>${leavingdate}</td>
+                                                <th>공개되는 날 :</th>
+                                                <td>${releasedate}</td>
                                             </tr>
                                         </table>
                                         <div class="desc">

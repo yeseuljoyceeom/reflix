@@ -278,4 +278,22 @@ def getdramainfo():
 
 # what's new
 
+totContents = list(db.totContents.find({},{"_id":False}))
+for content in totContents:
+    try:
+        cmmts = content['comment']
+        if len(cmmts)>0:
+            n = len(cmmts)
+            cnt = 0
+            for cmmt in cmmts:
+                cnt += cmmt['star']
+            average = round(cnt/len(cmmts),2)
+        else:
+            average = 0
+    except KeyError:
+        average = 0
+
+    finally:
+        print(average)
+        db.totContents.update_one({'title':content['title']},{"$set":{'average':average}})
 

@@ -7,39 +7,62 @@
 <style>
     #main {
         margin-top: 80px;
+        width: 100vw;
     }
 
     .r-form {
         margin: auto;
-        width: 500px;
+        width: 50%;
         display: flex;
         flex-direction: column;
+        /*border: 1px solid;*/
     }
 
     h3 {
         text-align: center;
+        padding-right: 40px;
     }
 
     .join-li {
         list-style: none;
         padding-left: 0px;
-        margin: 50px 0px auto auto;
-        width: 400px;
+        margin: 50px 0px 50px auto;
+        width: 80%;
     }
 
-    .form-control {
+
+    .join-li > li:nth-child(1) .form-control {
         border-radius: 0px;
         margin-top: 10px;
-        width: 300px;
+        width: 60%;
+        border: 1px solid;
+        /*margin-left: 75px;*/
+        /*margin: 10px auto;*/
+    }
+
+    .inner-li {
+        /*border: 1px solid;*/
+        width: 100%;
+        margin: auto;
+    }
+
+    .inner-li .form-control {
+        border-radius: 0px;
+        margin-top: 10px;
+        width: 60%;
+        border: 1px solid;
+        margin: 10px 0px;
     }
 
     .join-li > li:nth-child(1) {
         display: flex;
+        /*justify-content: center;*/
+        /*border: 1px solid;*/
     }
 
     .join-li > li:nth-child(1) button {
         border-radius: 0px;
-        font-size: 16px;
+        font-size: 13px;
         height: fit-content;
         width: fit-content;
         margin: 11px 0px 0px 5px;
@@ -47,11 +70,23 @@
 
     #r-button {
         border-radius: 0px;
-        width: 300px;
+        width: 48%;
+        margin-left: 20%;
     }
 
     #footer {
-        margin: 10px auto;
+        /*margin: 10px auto;*/
+        width: 100%;
+        /*padding-right: 20px;*/
+        /*border: 1px solid;*/
+    }
+
+    @media (max-width: 625px) {
+        .r-form {
+            width: 90%;
+        }
+
+
     }
 
 
@@ -68,16 +103,21 @@
                 <input id='id' class="form-control" type="text" placeholder="아이디" aria-label="아이디" maxlength="30">
                 <button type="button" class="btn btn-outline-secondary" onclick="confirmId()">중복확인</button>
             </li>
-            <li>
-                <input id='pw' class="form-control" type="password" placeholder="비밀번호" aria-label="비밀번호" maxlength="30">
-            </li>
-            <li>
-                <input id='confirm-pw' class="form-control" type="password" placeholder="비밀번호 확인" aria-label="비밀번호확인"
-                       maxlength="30">
-            </li>
-            <li>
-                <input id='nickname' class="form-control" type="text" placeholder="닉네임" aria-label="닉네임" maxlength="30">
-            </li>
+            <div class="inner-li">
+                <li>
+                    <input id='pw' class="form-control" type="password" placeholder="비밀번호" aria-label="비밀번호"
+                           maxlength="30">
+                </li>
+                <li>
+                    <input id='confirm-pw' class="form-control" type="password" placeholder="비밀번호 확인"
+                           aria-label="비밀번호확인"
+                           maxlength="30">
+                </li>
+                <li>
+                    <input id='nickname' class="form-control" type="text" placeholder="닉네임" aria-label="닉네임"
+                           maxlength="30">
+                </li>
+            </div>
         </ul>
         <div id="footer">
             <button id='r-button' type="button" class="btn btn-outline-secondary" onclick="signup()">회원가입</button>
@@ -116,7 +156,7 @@
         let nickname = $('#nickname').val()
 
         if (id === '') return alert('아이디를 입력해주세요')
-        if (pw === '' || pw_check==='') return alert('비밀번호를 입력해주세요')
+        if (pw === '' || pw_check === '') return alert('비밀번호를 입력해주세요')
         if (nickname === '') return alert('닉네임을 입력해주세요')
 
         if (pw !== pw_check) return alert('비밀번호를 다시 확인해 주세요')

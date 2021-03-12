@@ -285,6 +285,9 @@ def post_movie_comment():
 
     user = g.user['nickname']
 
+    db.totContents.update_one({"contentId": contentId},
+                              {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date}}})
+
     # 별점평균
     temp = db.totContents.find_one({"contentId": contentId})
     cmmts = temp['comment']
@@ -293,10 +296,10 @@ def post_movie_comment():
         cnt = 0
         for cmmt in cmmts:
             cnt += cmmt['star']
-        average = cnt / len(cmmts)
+        average = round(cnt / len(cmmts),2)
+        print(average)
+    db.totContents.update_one({"contentId": contentId},{"$set":{"average":average}})
 
-    db.totContents.update_one({"contentId": contentId},
-                              {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date}}, "$set":{"average":average}})
     return jsonify({'result': 'success', 'msg': '리뷰 작성 완료!'})
 
 

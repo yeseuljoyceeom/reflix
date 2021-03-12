@@ -50,6 +50,7 @@
         /*font-family: 'Nanum Myeongjo', serif;*/
         font-size: 15px;
         margin-top: 3px;
+        font-family: 'Do Hyeon', sans-serif;
     }
 
 
@@ -69,25 +70,32 @@
         display: flex;
         /*justify-content: space-between;*/
         align-content: space-around;
-        align-self: flex-end;
         flex-wrap: wrap;
         overflow: auto;
         border-top: 1px solid black;
     }
 
+    #movie_list h2 {
+        margin: 50px auto;
+    }
+
     .movie {
-        height: 450px;
+        height: 28vw;
         width: calc(100% / 5);
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        padding-left: 19px;
-
+        /*justify-content: space-evenly;*/
+        align-items: center;
+        /*padding-left: 19px;*/
+        margin: 25px 0px;
+        /*border: 1px solid;*/
     }
 
     .movie img {
-        width: 232px;
-        height: 336px;
+        /*width: 232px;*/
+        /*height: 336px;*/
+        width: 16vw;
+        height: 23vw;
     }
 
     @font-face {
@@ -111,24 +119,24 @@
     }
 
     .movie-desc {
-        margin-top: 10px;
+        margin: 10px 10px;
+        align-self: stretch;
     }
 
     .movie-desc > div:nth-child(1) {
         /*margin-top: 4px;*/
-        margin-right: 10px;
         display: flex;
         justify-content: space-between;
         color: royalblue;
-        font-size: 12px;
+        font-size: 10px;
         text-align: left;
     }
 
-    .movie-desc > div > p:nth-child(2){
+    .movie-desc > div > p:nth-child(2) {
         font-size: 15px;
     }
 
-    .movie-desc > div > p:nth-child(2) > span{
+    .movie-desc > div > p:nth-child(2) > span {
         color: black;
     }
 
@@ -166,7 +174,9 @@
     }
 
     @media (max-width: 625px) {
-
+        #main {
+            margin: 0px;
+        }
 
         #movie_list {
             width: 100vw;
@@ -174,28 +184,30 @@
 
         .movie {
             width: calc(100% / 5);
-            justify-content: space-around;
+            /*justify-content: space-around;*/
             height: fit-content;
             margin-top: 10px;
         }
 
-        .movie img {
-            width: 100%;
-            height: auto;
-
-        }
-
-        .movie-desc > p:nth-child(1) {
+        .movie-desc > div:nth-child(1) {
             /*margin-top: 4px;*/
             color: royalblue;
             font-size: 10px;
             text-align: left;
-
+            flex-direction: column;
         }
 
         .movie-desc > p:nth-child(2) {
-            font-size: 12px;
+            font-size: 10px;
             /*text-align: center;*/
+        }
+
+        .movie-desc > div > p:nth-child(2) {
+            font-size: 10px;
+        }
+
+        .movie-desc{
+            margin: 5px 0px 5px 10px;
         }
 
         #hideicon {
@@ -206,30 +218,35 @@
             display: block;
         }
 
-        #searchbar{
+        #searchbar {
             width: 100vw;
             display: flex;
             align-items: stretch;
         }
 
-        #textsearch{
+        #textsearch {
             width: 60%;
             padding-left: 5px;
         }
 
-        .form__field{
+        .form__field {
             width: 70%;
         }
 
-        .form-check{
+        .form-check {
             font-size: 10px;
             width: 20%;
             padding-left: 5px;
         }
 
-        .form-select{
+        .form-select {
             width: 20%;
         }
+
+        #pagination a {
+            font-size: 15px;
+        }
+
     }
 </style>
 {% endblock %}
@@ -383,7 +400,7 @@
                     $("#pagination").empty()
                     let data = response["contents"]
                     let total = response["total"]
-                    printContents(data)
+                    printContents(data, total)
                     printPagination(total, page, order)
                 } else {
                     alert('목록을 받아오지 못했습니다.')
@@ -393,28 +410,37 @@
         })
     }
 
-    function printContents(data) {
-        for (let i = 0; i < data.length; i++) {
-            let title = data[i]['title']
-            let type = data[i]['type'].split(" ")[0]
-            let id = data[i]['contentId']
-            let thumbnail = data[i]['thumbnail']
-            let average = data[i]['average']
-            if (thumbnail == 'None') {
-                thumbnail = '..\\static\\none.jpg'
-            }
-            let temp = `<div class="movie" onclick="">
+    function printContents(data, total) {
+
+        if (total != 0) {
+            for (let i = 0; i < data.length; i++) {
+                let title = data[i]['title']
+                let type = data[i]['type'].split(" ")[0]
+                let id = data[i]['contentId']
+                let thumbnail = data[i]['thumbnail']
+                let average = data[i]['average']
+                if (thumbnail == 'None') {
+                    thumbnail = '..\\static\\none.jpg'
+                }
+                let temp = `<div class="movie" onclick="">
                                                 <a href = "/movie?contentID=${id}" ><img src="${thumbnail}" class="card-img" alt="${title}" /></a>
                                                 <div class="movie-desc">
                                                     <div class="type-star"><p>${type}</p><p>★ <span>${average}</span></p></div>
                                                     <p class="movie-title">${title}</p>
                                                 </div>
                                             </div>`
-            $("#movie_list").append(temp)
+                $("#movie_list").append(temp)
+            }
+        } else {
+            $("#movie_list").append(`<h2>찾으시는 검색결과가 없습니다!</h2>`)
         }
+
     }
 
     function printPagination(total, page, order) {
+        if (total == 0) {
+            return
+        }
         let totpage = Math.ceil(total / size)
         let start = `<a href="/search?page=1&order=${order}&keyword=${keyword}&category=${category}">1</a><a href="#" style="pointer-events: none; cursor: default;">---</a>`
         let finish = `<a href="#" style="pointer-events: none; cursor: default;">---</a><a href="/search?page=${totpage}&order=${order}&keyword=${keyword}&category=${category}">${totpage}</a>`

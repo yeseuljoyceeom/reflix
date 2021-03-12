@@ -6,7 +6,7 @@
 
 <style>
     #main {
-        width: calc(100vw - 200px);
+        width: 80%;
         margin: 50px auto;
         display: flex;
         flex-direction: column;
@@ -18,19 +18,21 @@
     }
 
     .movieinfo > img {
-        max-width: 300px;
-        max-height: 434px;
-        width: 300px;
-        height: 434px;
+        width: 20vw;
+        height: 28vw;
+        /*width: 300px;*/
+        /*height: 434px;*/
     }
 
     .rightblock {
-        width: 500px;
+        width: 65%;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
         /*border: 1px solid;*/
         position: relative;
+        margin-left: 10px;
+
     }
 
     .txtinfo .title {
@@ -51,33 +53,46 @@
         color: dimgray;
     }
 
+    .txtinfo td{
+        font-family: 'LotteMartDream';
+    }
+
+    .desc p{
+        font-family: 'LotteMartDream';
+    }
+
     .desc > span {
         font-family: 'Do Hyeon', sans-serif;
         font-size: 20px;
         color: dimgray;
     }
 
-    .desc{
-        margin-bottom: 25px;
+    .desc {
+        /*margin-bottom: 40px;*/
     }
 
-    .average{
+    .average {
         padding: 3px;
         border: 1px solid;
         width: fit-content;
-        position: absolute;
-        right: 0;
-        bottom: 0;
+        height: fit-content;
+        /*position: absolute;*/
         font-family: 'Do Hyeon', sans-serif;
     }
 
-    .average > span{
+    .average > p{
+        text-align: center;
+        margin: auto;
+        /*padding: 5px;*/
+    }
+
+    .average > p > span {
         color: royalblue;
     }
 
     #comment {
         margin-top: 50px;
-        width: calc(100vw - 400px);
+        width: 90%;
         margin-left: auto;
         margin-right: auto;
         display: flex;
@@ -106,7 +121,7 @@
         margin-top: 10px;
     }
 
-    .comment-cont{
+    .comment-cont {
         display: flex;
 
     }
@@ -120,11 +135,34 @@
         color: royalblue;
     }
 
-    .userinfo{
+    .userinfo {
         color: lightgray;
     }
 
+    @media (max-width: 625px) {
+        * {
+            font-size: 10px;
+        }
 
+        .txtinfo .title {
+            font-size: 15px;
+        }
+
+        .txtinfo .year {
+            font-size: 10px;
+        }
+
+        .txtinfo th {
+            width: 70px;
+            padding-right: 10px;
+            font-size: 15px;
+        }
+
+        .desc > span {
+            font-size: 15px;
+        }
+
+    }
 
 </style>
 {% endblock %}
@@ -142,7 +180,7 @@
     <div id="comment">
         <div class="userinput">
             <P id="star"> <!-- 부모 -->
-                <a href="javascript:avoid(0)" value="1">★</a> <!-- 자식들-->
+                <a href="javascript:void(0)" value="1">★</a> <!-- 자식들-->
                 <a href="javascript:void(0)" value="2">★</a>
                 <a href="javascript:void(0)" value="3">★</a>
                 <a href="javascript:void(0)" value="4">★</a>
@@ -164,8 +202,11 @@
 
 <script>
     let id = (location.search.substr(location.search.indexOf("?") + 1)).split("=")[1]
-
     $(document).ready(function () {
+        if (id == null) {
+            window.location.href = '/'
+        }
+
         $(".nav-item").children("a").removeClass("active")
         // $(".nav.nav-pills>.nav-item:nth-child(2)>a").addClass("active")
         $(".movieinfo").empty()
@@ -194,7 +235,7 @@
                         thumbnail = "..\\static\\none.jpg"
                     }
 
-                    if (type.slice(0,2) == "영화") {
+                    if (type.slice(0, 2) == "영화") {
                         let genre = data["genre"]
                         let country = data["country"]
                         let runtime = data["runtime"]
@@ -229,7 +270,7 @@
 
                         $(".movieinfo").append(temp)
                     }
-                    if (type.slice(0,3) == '드라마') {
+                    if (type.slice(0, 3) == '드라마') {
                         let country = data["country"].split("드라마")[0]
                         let cast = data['cast']
                         temp = `<img src="${thumbnail}" alt="${title}">
@@ -255,7 +296,7 @@
                                `
                         $(".movieinfo").append(temp)
                     }
-                    if (type.slice(0,1) == '쇼') {
+                    if (type.slice(0, 1) == '쇼') {
                         let category = data["category"]
                         let cast = data['cast']
                         temp = `<img src="${thumbnail}" alt="${title}">
@@ -302,7 +343,7 @@
                         $(".movieinfo").append(temp)
                     }
 
-                    $('.rightblock').append(`<div class="average">Reflix 평점: <span class="int">${average}</span></div>`)
+                    $('.rightblock').append(`<div class="average"><p>Reflix 평점: <span class="int">${average}</span></p></div>`)
 
                     if (comments) {
                         for (let i = 0; i < comments.length; i++) {
@@ -330,30 +371,19 @@
     }
 
     $('#star a').click(function () {
+        check_if_login()
         $(this).parent().children("a").removeClass("on");
         $(this).addClass("on").prevAll("a").addClass("on");
         $("#star > span:nth-child(6)").empty();
         $("#star > span:nth-child(6)").append($(this).attr("value"));
     })
 
-    $("#exampleFormControlTextarea1").focus(function (){
-        $.ajax({
-            type: "GET",
-            url: "/check_if_login",
-            data: {
-            },
-            success: function (response) {
-                if (response["result"] == 'success') {
-                    return
-                } else {
-                    alert('로그인 후 이용해 주세요')
-                    window.location.href = '/login'
-                }
-            }
-        })
+    $("#exampleFormControlTextarea1").focus(function () {
+        check_if_login()
     })
 
     function postcomment() {
+        check_if_login()
         let star = $("#star > span:nth-child(6)").text()
         let comment = $("#exampleFormControlTextarea1").val()
         let today = new Date()
@@ -383,6 +413,22 @@
                     window.location.reload();
                 } else {
                     alert("작성 실패")
+                }
+            }
+        })
+    }
+
+    function check_if_login() {
+        $.ajax({
+            type: "GET",
+            url: "/check_if_login",
+            data: {},
+            success: function (response) {
+                if (response["result"] == 'success') {
+                    return
+                } else {
+                    alert('로그인 후 이용해 주세요')
+                    window.location.href = `/login?pp=${id}`
                 }
             }
         })
