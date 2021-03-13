@@ -29,6 +29,21 @@
     <title>Reflix - 넷플릭스의 모든 것</title>
 
     <style>
+        @font-face {
+            font-family: 'Cafe24Ohsquare';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24Ohsquare.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'NEXON Lv2 Gothic';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv2 Gothic.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+
         #logo {
             /*width: 300px;*/
             margin: 10px 50px;
@@ -40,6 +55,7 @@
         #login {
             margin: auto 0px;
             padding-top: 15px;
+            font-family: 'NEXON Lv2 Gothic';
         }
 
         #login a {
@@ -77,37 +93,41 @@
         }
 
         .nav {
-            width: 100vw;
+            width: 99vw;
             display: flex;
             justify-content: space-between;
         }
 
-        .nav-item:nth-child(1) {
-            border-left: 0px;
-        }
+        /*.nav-item:nth-child(1) {*/
+        /*    border-left: 0px;*/
+        /*}*/
 
         .nav-item {
             /*border: 1px solid;*/
-            width: calc(100vw / 4);
-            border: 2px solid black;
-            border-right: 0px;
+            width: calc(100vw / 4.1);
+            border: 1px solid black;
+            border-radius: 0px;
+            /*border-right: 0px;*/
         }
 
         .nav-link {
             text-decoration: none;
             color: black;
             /*background-color: black;*/
-            font-family: 'Do Hyeon', sans-serif;
-            font-size: 15px;
+            /*font-family: 'Do Hyeon', sans-serif;*/
+            font-family: 'Cafe24Ohsquare';
+            font-size: 13px;
             text-align: center;
             margin: auto;
         }
 
 
-        .nav-link img {
+        .nav-item img {
             max-width: 30px;
             max-height: 30px;
-            margin-right: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-right: 5px;
         }
 
         .logout {
@@ -127,14 +147,15 @@
             }
 
             .nav-link {
-                font-size: 10px;
+                font-size: 5px;
+                text-align: left;
             }
 
             .nav-link img {
                 max-width: 15px;
                 max-height: 15px;
                 /*margin-right: 50%;*/
-                margin-left: 40%;
+                margin-left: 35%;
                 margin-right: 50%;
             }
 
@@ -142,7 +163,7 @@
                 font-size: 10px;
             }
 
-            #carouselExampleIndicators{
+            #carouselExampleIndicators {
                 height: fit-content;
             }
 
@@ -209,10 +230,10 @@
                     <a class="nav-link" aria-current="page" href="/search"><img src="../static/netflix.png">영화검색</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/whatsnew"><img src="../static/new-products-label.png">Upcoming</a>
+                    <a class="nav-link" href="/whatsnew"><img src="../static/new-products-label.png">UPCOMING</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/leavingsoon"><img src="../static/alarm-clock.png">Leaving Soon</a>
+                    <a class="nav-link" href="/leavingsoon"><img src="../static/alarm-clock.png">LEAVING SOON</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/board"><img src="../static/popcorn.png">자유게시판</a>

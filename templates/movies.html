@@ -44,23 +44,17 @@
         background: transparent;
     }
 
-
-    .form-check {
-        padding-left: 40px;
-        /*font-family: 'Nanum Myeongjo', serif;*/
-        font-size: 15px;
-        margin-top: 3px;
-        font-family: 'Do Hyeon', sans-serif;
-    }
-
-
     .form-select {
-        width: 100px;
-        margin: 0px 10px;
+        width: fit-content;
+        margin: 0px 5px;
         font-size: 10px;
         height: 30px;
         color: black;
         border-color: black;
+    }
+
+    #order{
+        margin-left: 15px;
     }
 
     #movie_list {
@@ -98,24 +92,11 @@
         height: 23vw;
     }
 
-    @font-face {
-        font-family: 'InfinitySans-RegularA1';
-        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/InfinitySans-RegularA1.woff') format('woff');
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: 'LotteMartDream';
-        font-style: normal;
-        font-weight: 400;
-        src: url('//cdn.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff2') format('woff2'), url('//cdn.jsdelivr.net/korean-webfonts/1/corps/lottemart/LotteMartDream/LotteMartDreamMedium.woff') format('woff');
-    }
-
     .movie-desc p {
         margin: 0 5px;
         /*font-family: 'Noto Sans KR', sans-serif;*/
-        font-family: 'LotteMartDream';
+        /*font-family: 'LotteMartDream';*/
+        font-family: 'NEXON Lv2 Gothic';
     }
 
     .movie-desc {
@@ -206,7 +187,7 @@
             font-size: 10px;
         }
 
-        .movie-desc{
+        .movie-desc {
             margin: 5px 0px 5px 10px;
         }
 
@@ -226,17 +207,11 @@
 
         #textsearch {
             width: 60%;
-            padding-left: 5px;
+            padding-left: 15px;
         }
 
         .form__field {
             width: 70%;
-        }
-
-        .form-check {
-            font-size: 10px;
-            width: 20%;
-            padding-left: 5px;
         }
 
         .form-select {
@@ -267,23 +242,14 @@
         </div>
         <a id='hideicon' href='javascript:void(0)' onclick="showsearch()"><img src="../static/search.png"></a>
 
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
-                   value="latest"
-                   checked="checked">
-            <label class="form-check-label" for="flexRadioDefault1">
-                최신순
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
-                   value="oldest">
-            <label class="form-check-label" for="flexRadioDefault2">
-                오래된순
-            </label>
-        </div>
 
-        <select class="form-select" aria-label="Default select example">
+        <select id='order' class="form-select" aria-label="Default select example">
+            <option value="1" selected>최신순</option>
+            <option value="2">오래된순</option>
+            <option value="3">평점순</option>
+        </select>
+
+        <select id='category' class="form-select" aria-label="Default select example">
             <option value="1" selected>전체</option>
             <option value="2">영화</option>
             <option value="3">드라마</option>
@@ -308,7 +274,7 @@
 <script>
     let page = 1
     let size = 25
-    let order = 'latest'
+    let order = 1
     let keyword = ''
     let category = 1
 
@@ -320,29 +286,31 @@
         if ((location.search.substr(location.search.indexOf("?") + 1))) {
             let params = (location.search.substr(location.search.indexOf("?") + 1)).split("&")
             page = Number(params[0].split("=")[1])
-            order = params[1].split("=")[1]
+            order = Number(params[1].split("=")[1])
             keyword = decodeURI(params[2].split("=")[1])
             category = Number(params[3].split('=')[1])
         }
 
-        if (order == 'latest') {
-            $("input[value='latest']").prop("checked", true);
-        } else {
-            $("input[value='oldest']").prop("checked", true);
+        if (order == 1) {
+            $("#order").val("1").prop("selected", true);
+        } else if (order == 2) {
+            $("#order").val("2").prop("selected", true);
+        } else if (order == 3) {
+            $("#order").val("3").prop("selected", true);
         }
 
         if (category == 1) {
-            $(".form-select").val("1").prop("selected", true);
+            $("#category").val("1").prop("selected", true);
         } else if (category == 2) {
-            $(".form-select").val("2").prop("selected", true);
+            $("#category").val("2").prop("selected", true);
         } else if (category == 3) {
-            $(".form-select").val("3").prop("selected", true);
+            $("#category").val("3").prop("selected", true);
         } else if (category == 4) {
-            $(".form-select").val("4").prop("selected", true);
+            $("#category").val("4").prop("selected", true);
         } else if (category == 5) {
-            $(".form-select").val("5").prop("selected", true);
+            $("#category").val("5").prop("selected", true);
         } else if (category == 6) {
-            $(".form-select").val("6").prop("selected", true);
+            $("#category").val("6").prop("selected", true);
         }
 
         if (keyword != '') {
@@ -351,17 +319,17 @@
             $('#hideicon').hide()
             $('#textsearch >input').val(keyword)
         }
+
         getContents()
 
     })
 
-    $("input[name='flexRadioDefault'][type='radio']").change(function () {
-        order = this.value
+    $("#order").change(function () {
+        order = Number(this.value)
         window.open(`/search?page=1&order=${order}&keyword=${keyword}&category=${category}`, "_self")
-
     })
 
-    $(".form-select").change(function () {
+    $("#category").change(function () {
         category = Number(this.value)
         window.open(`/search?page=1&order=${order}&keyword=${keyword}&category=${category}`, "_self")
     })

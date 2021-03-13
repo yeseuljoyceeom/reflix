@@ -36,7 +36,9 @@
     }
 
     .txtinfo .title {
-        font-family: 'Black Han Sans', sans-serif;
+        /*font-family: 'Black Han Sans', sans-serif;*/
+        /*font-family: 'TmoneyRoundWindExtraBold';*/
+        font-family: 'Cafe24Ohsquare';
         font-size: 35px;
     }
 
@@ -48,17 +50,24 @@
     .txtinfo th {
         width: 70px;
         padding-right: 10px;
-        font-family: 'Do Hyeon', sans-serif;
+        /*font-family: 'Do Hyeon', sans-serif;*/
+        /*font-family: 'TmoneyRoundWindExtraBold';*/
+        font-family: 'Cafe24Ohsquare';
         font-size: 20px;
         color: dimgray;
     }
 
-    .txtinfo td{
-        font-family: 'LotteMartDream';
+    .txtinfo td {
+        /*font-family: 'RIDIBatang';*/
+        font-family: 'NEXON Lv2 Gothic';
     }
 
-    .desc p{
-        font-family: 'LotteMartDream';
+
+    .desc p {
+        /*font-family: 'LotteMartDream';*/
+        /*font-family: 'RIDIBatang';*/
+        /*font-family: 'NEXON Lv2 Gothic';*/
+        font-family: 'NEXON Lv2 Gothic Light';
     }
 
     .desc > span {
@@ -80,7 +89,7 @@
         font-family: 'Do Hyeon', sans-serif;
     }
 
-    .average > p{
+    .average > p {
         text-align: center;
         margin: auto;
         /*padding: 5px;*/
@@ -97,6 +106,7 @@
         margin-right: auto;
         display: flex;
         flex-direction: column;
+        font-family: 'NEXON Lv2 Gothic';
     }
 
     #star {
@@ -126,6 +136,10 @@
 
     }
 
+    .comment-cont div:nth-child(2) {
+        width: 80%;
+    }
+
     .user-star {
         color: gainsboro;
         margin-right: 40px;
@@ -137,6 +151,15 @@
 
     .userinfo {
         color: lightgray;
+    }
+
+    .like img {
+        width: 20px;
+    }
+
+    .like a {
+        text-decoration: none;
+        color: black;
     }
 
     @media (max-width: 625px) {
@@ -224,13 +247,14 @@
             success: function (response) {
                 if (response['result'] == 'success') {
                     let data = response['content']
+                    let comments = response['comments']
                     let title = data["title"]
                     let year = data["year"]
                     let type = data["type"]
                     let desc = data['desc']
                     let thumbnail = data['thumbnail']
                     let average = data['average']
-                    let comments = data['comment']
+                    // let comments = data['comment']
                     if (thumbnail == "None" || thumbnail == "about:blank") {
                         thumbnail = "..\\static\\none.jpg"
                     }
@@ -345,13 +369,15 @@
 
                     $('.rightblock').append(`<div class="average"><p>Reflix 평점: <span class="int">${average}</span></p></div>`)
 
-                    if (comments) {
+                    if (comments != null) {
                         for (let i = 0; i < comments.length; i++) {
                             let comment = comments[i]
+                            let commentId = comment['commentId']
                             let star = comment["star"]
                             let text = comment["text"]
                             let date = comment["date"]
                             let user = comment['user']
+                            let like = comment['like']
                             let temp = `<hr/><div class="comment-cont"><div class="user-star"><p>`
                             for (let j = 0; j < star; j++) {
                                 temp += `<span class="on">★</span>`
@@ -359,7 +385,10 @@
                             for (let j = 0; j < (5 - star); j++) {
                                 temp += `<span>★</span>`
                             }
-                            temp += `</p></div><div><p class="userinfo">${user} | ${date}</p><p>${text}</p></div></div>`
+
+                            temp += `</p></div><div><p class="userinfo">${user} | ${date}</p><p>${text}</p></div>
+                                                <div class="like"><a href="javascript:void(0)" onclick="getLike(${commentId})"><img src="../static/thumbsup.png">${like}</a></div></div>`
+
                             $(".commentlist").append(temp)
                         }
                     }
@@ -384,6 +413,7 @@
 
     function postcomment() {
         check_if_login()
+
         let star = $("#star > span:nth-child(6)").text()
         let comment = $("#exampleFormControlTextarea1").val()
         let today = new Date()
@@ -405,7 +435,8 @@
                 'id_give': id,
                 'star_give': star,
                 'comment_give': comment,
-                'date_give': date
+                'date_give': date,
+                'like_give': 0
             },
             success: function (response) {
                 if (response["result"] == 'success') {
@@ -418,6 +449,26 @@
         })
     }
 
+    function getLike(cId) {
+        if (check_if_login()) {
+            $.ajax({
+                type: "POST",
+                url: "/movie_comment_like",
+                data: {'contentId_give': id, 'commentId_give': cId},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        window.location.reload();
+                    } else {
+                        alert('좋아요 실패')
+                    }
+                }
+            })
+        } else {
+            return
+        }
+    }
+
+
     function check_if_login() {
         $.ajax({
             type: "GET",
@@ -425,10 +476,11 @@
             data: {},
             success: function (response) {
                 if (response["result"] == 'success') {
-                    return
+                    return true
                 } else {
                     alert('로그인 후 이용해 주세요')
                     window.location.href = `/login?pp=${id}`
+                    return false
                 }
             }
         })

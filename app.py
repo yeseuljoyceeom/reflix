@@ -25,7 +25,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         # 쿠키에서 token_give 가져오기
         token_receive = request.cookies.get(COOKIE_KEY)
-        print('token_receive :', token_receive)
+        # print('token_receive :', token_receive)
 
         if token_receive is None:
             # token이 없는 경우
@@ -45,7 +45,6 @@ def login_required(f):
         # g는 각각의 request 내에서만 값이 유효한 스레드 로컬 변수입니다.
         # 사용자의 요청이 동시에 들어오더라도 각각의 request 내에서만 g 객체가 유효하기 때문에 사용자 ID를 저장해도 문제가 없습니다.
         g.user = db.user.find_one({'userId': payload["id"]})
-        print(g.user['nickname'])
 
         # 로그인 성공시 다음 함수 실행
         return f(*args, **kwargs)
@@ -111,7 +110,7 @@ def login():
 def printcontents():
     page = int(request.args.get('page', 1))
     size = int(request.args.get('size', 28))
-    order = request.args.get('order')
+    order = int(request.args.get('order'))
     keyword = request.args.get('keyword')
     category = int(request.args.get('category', 1))
     n_skip = (page - 1) * size
@@ -128,17 +127,22 @@ def printcontents():
         elif ctgr == 6:
             ctgr = '애니메이션'
 
-        if ord == 1:
-            ord = 1
-        else:
-            ord = -1
+        if ord == 1 or ord == -1:
+            result = list(db.totContents.find({'$and': [{'type': {'$regex': ctgr}},
+                                                        {'$or': [{'title': {'$regex': keyword}},
+                                                                 {'cast': {'$regex': keyword}},
+                                                                 {'director': {'$regex': keyword}}]}]},
+                                              {"_id": False}).sort(
+                [('year', ord), ('_id', 1)]).skip(n_skip).limit(size))
 
-        result = list(db.totContents.find({'$and': [{'type': {'$regex': ctgr}},
-                                                    {'$or': [{'title': {'$regex': keyword}},
-                                                             {'cast': {'$regex': keyword}},
-                                                             {'director': {'$regex': keyword}}]}]},
-                                          {"_id": False}).sort(
-            [('year', ord), ('_id', 1)]).skip(n_skip).limit(size))
+        elif ord == 3:
+            result = list(db.totContents.find({'$and': [{'type': {'$regex': ctgr}},
+                                                        {'$or': [{'title': {'$regex': keyword}},
+                                                                 {'cast': {'$regex': keyword}},
+                                                                 {'director': {'$regex': keyword}}]}]},
+                                              {"_id": False}).sort(
+                [('average', -1), ('_id', 1)]).skip(n_skip).limit(size))
+
         totalContents = len(list(db.totContents.find({'$and': [{'type': {'$regex': ctgr}},
                                                                {'$or': [{'title': {'$regex': keyword}},
                                                                         {'cast': {'$regex': keyword}},
@@ -159,19 +163,19 @@ def printcontents():
         elif ctgr == 6:
             ctgr = '애니메이션'
 
-        if ord == 1:
-            ord = 1
-        else:
-            ord = -1
+        if ord == 1 or ord == -1:
+            result = list(db.totContents.find({'type': {'$regex': ctgr}}, {"_id": False}).sort(
+                [('year', ord), ('_id', 1)]).skip(n_skip).limit(size))
+        elif ord == 3:
+            result = list(db.totContents.find({'type': {'$regex': ctgr}}, {"_id": False}).sort(
+                [('average', -1), ('_id', 1)]).skip(n_skip).limit(size))
 
-        result = list(db.totContents.find({'type': {'$regex': ctgr}}, {"_id": False}).sort(
-            [('year', ord), ('_id', 1)]).skip(n_skip).limit(size))
         totalContents = len(list(db.totContents.find({'type': {'$regex': ctgr}}, {"_id": False})))
 
         return [totalContents, result]
 
     if keyword != '':
-        if order == 'latest':
+        if order == 1:
             if category == 1:
                 pageContents = list(
                     db.totContents.find({'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
@@ -196,7 +200,7 @@ def printcontents():
                 pageContents = return_data(6, -1)[1]
                 totalContents = return_data(6, -1)[0]
 
-        elif order == 'oldest':
+        elif order == 2:
             if category == 1:
                 pageContents = list(
                     db.totContents.find({'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
@@ -220,8 +224,33 @@ def printcontents():
             elif category == 6:
                 pageContents = return_data(6, 1)[1]
                 totalContents = return_data(6, 1)[0]
+
+        elif order == 3:
+            if category == 1:
+                pageContents = list(
+                    db.totContents.find({'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
+                                                 {'director': {'$regex': keyword}}]}, {"_id": False}).sort(
+                        [('average', -1), ('_id', 1)]).skip(n_skip).limit(size))
+                totalContents = db.totContents.count(
+                    {'$or': [{'title': {'$regex': keyword}}, {'cast': {'$regex': keyword}},
+                             {'director': {'$regex': keyword}}]})
+            elif category == 2:
+                pageContents = return_data(2, 3)[1]
+                totalContents = return_data(2, 3)[0]
+            elif category == 3:
+                pageContents = return_data(3, 3)[1]
+                totalContents = return_data(3, 3)[0]
+            elif category == 4:
+                pageContents = return_data(4, 3)[1]
+                totalContents = return_data(4, 3)[0]
+            elif category == 5:
+                pageContents = return_data(5, 3)[1]
+                totalContents = return_data(5, 3)[0]
+            elif category == 6:
+                pageContents = return_data(6, 3)[1]
+                totalContents = return_data(6, 3)[0]
     else:
-        if order == 'latest':
+        if order == 1:
             if category == 1:
                 pageContents = list(
                     db.totContents.find({}, {"_id": False}).sort([('year', -1), ('_id', 1)]).skip(n_skip).limit(size))
@@ -241,7 +270,7 @@ def printcontents():
             elif category == 6:
                 pageContents = return_data_wo_key(6, -1)[1]
                 totalContents = return_data_wo_key(6, -1)[0]
-        elif order == 'oldest':
+        elif order == 2:
             if category == 1:
                 pageContents = list(
                     db.totContents.find({}, {"_id": False}).sort([('year', 1), ('_id', 1)]).skip(n_skip).limit(size))
@@ -261,6 +290,26 @@ def printcontents():
             elif category == 6:
                 pageContents = return_data_wo_key(6, 1)[1]
                 totalContents = return_data_wo_key(6, 1)[0]
+        elif order == 3:
+            if category == 1:
+                pageContents = list(
+                    db.totContents.find({}, {"_id": False}).sort([('average', -1), ('_id', 1)]).skip(n_skip).limit(size))
+                totalContents = db.totContents.count({})
+            elif category == 2:
+                pageContents = return_data_wo_key(2, 3)[1]
+                totalContents = return_data_wo_key(2, 3)[0]
+            elif category == 3:
+                pageContents = return_data_wo_key(3, 3)[1]
+                totalContents = return_data_wo_key(3, 3)[0]
+            elif category == 4:
+                pageContents = return_data_wo_key(4, 3)[1]
+                totalContents = return_data_wo_key(4, 3)[0]
+            elif category == 5:
+                pageContents = return_data_wo_key(5, 3)[1]
+                totalContents = return_data_wo_key(5, 3)[0]
+            elif category == 6:
+                pageContents = return_data_wo_key(6, 3)[1]
+                totalContents = return_data_wo_key(6, 3)[0]
 
     return jsonify({'result': 'success', 'contents': pageContents, 'total': totalContents})
 
@@ -270,8 +319,12 @@ def printcontents():
 def printcontent():
     id = int(request.args.get('id'))
     content = db.totContents.find_one({"contentId": id}, {"_id": False})
+    try:
+        comments = sorted(content['comment'], key=lambda x: x['like'], reverse=True)
+    except KeyError:
+        comments = None
 
-    return jsonify({'result': 'success', 'content': content})
+    return jsonify({'result': 'success', 'content': content, 'comments':comments})
 
 
 # 영화 개별페이지 댓글 저장
@@ -282,11 +335,13 @@ def post_movie_comment():
     star = int(request.form["star_give"])
     comment = request.form["comment_give"]
     date = request.form["date_give"]
+    like = int(request.form['like_give'])
+    commentId = len(db.totContents.find_one({"contentId": contentId})['comment']) + 1
 
     user = g.user['nickname']
 
     db.totContents.update_one({"contentId": contentId},
-                              {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date}}})
+                              {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date, 'like': like, 'commentId':commentId}}})
 
     # 별점평균
     temp = db.totContents.find_one({"contentId": contentId})
@@ -296,12 +351,20 @@ def post_movie_comment():
         cnt = 0
         for cmmt in cmmts:
             cnt += cmmt['star']
-        average = round(cnt / len(cmmts),2)
+        average = round(cnt / len(cmmts), 2)
         print(average)
-    db.totContents.update_one({"contentId": contentId},{"$set":{"average":average}})
+    db.totContents.update_one({"contentId": contentId}, {"$set": {"average": average}})
 
     return jsonify({'result': 'success', 'msg': '리뷰 작성 완료!'})
 
+
+@app.route('/movie_comment_like', methods=["POST"])
+@login_required
+def movie_comment_like():
+    commentId = int(request.form['commentId_give'])
+    contentId = int(request.form['contentId_give'])
+    db.totContents.update_one({"contentId": contentId, "comment.commentId": commentId},{"$inc":{"comment.$.like": 1}})
+    return jsonify({'result': 'success'})
 
 # 영화 개별페이지 댓글 보여주기
 # @app.route('/movie_comment', methods=["GET"])
