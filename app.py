@@ -336,14 +336,17 @@ def post_movie_comment():
     comment = request.form["comment_give"]
     date = request.form["date_give"]
     like = int(request.form['like_give'])
-    commentId = len(db.totContents.find_one({"contentId": contentId})['comment']) + 1
+    try:
+        commentId = len(db.totContents.find_one({"contentId": contentId})['comment']) + 1
+    except KeyError:
+        commentId = 1
 
     user = g.user['nickname']
 
     db.totContents.update_one({"contentId": contentId},
                               {"$push": {"comment": {"user": user, "star": star, "text": comment, "date": date, 'like': like, 'commentId':commentId}}})
 
-    # 별점평균
+    # 별점평균 db에 없데이트
     temp = db.totContents.find_one({"contentId": contentId})
     cmmts = temp['comment']
     n = len(cmmts)
@@ -357,7 +360,7 @@ def post_movie_comment():
 
     return jsonify({'result': 'success', 'msg': '리뷰 작성 완료!'})
 
-
+#댓글 좋아요기능
 @app.route('/movie_comment_like', methods=["POST"])
 @login_required
 def movie_comment_like():
@@ -389,6 +392,7 @@ def read_posts():
     return jsonify({'result': 'success', 'data': posts, 'total': total})
 
 
+#새로운 게시글 작성
 @app.route('/posts', methods=["POST"])
 @login_required
 def post_post():
@@ -420,6 +424,7 @@ def read_post():
     return jsonify({'result': 'success', 'data': post})
 
 
+# 게시글 댓글 저장
 @app.route('/board_comment', methods=["POST"])
 @login_required
 def post_board_comment():
@@ -434,6 +439,7 @@ def post_board_comment():
     return jsonify({'result': 'success', 'msg': '댓글 작성 완료!'})
 
 
+#게시글 삭제
 @app.route('/delete_post', methods=["POST"])
 def delete_post():
     postId_receive = int(request.form['postId_give'])
@@ -442,6 +448,7 @@ def delete_post():
     return jsonify({'result': 'success', 'msg': '삭제 완료'})
 
 
+#게시글 수정
 @app.route('/update_post', methods=["POST"])
 def update_post():
     postId_receive = int(request.form['postId_give'])
@@ -506,6 +513,7 @@ def login_api():
         return jsonify({'result': 'fail', 'msg': '아이디와 비밀번호를 확인해 주세요 😓'})
 
 
+#로그인 했는지 안했는지 확인, 했다면 유저 정보 보내기
 @app.route('/check_if_login', methods=["GET"])
 @login_required
 def check_if_login():
@@ -522,6 +530,7 @@ def logout():
     res.delete_cookie(COOKIE_KEY)
 
     return res
+
 
 
 @app.route('/get_leavingsoon', methods=["GET"])

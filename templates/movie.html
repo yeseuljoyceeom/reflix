@@ -450,22 +450,20 @@
     }
 
     function getLike(cId) {
-        if (check_if_login()) {
-            $.ajax({
-                type: "POST",
-                url: "/movie_comment_like",
-                data: {'contentId_give': id, 'commentId_give': cId},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        window.location.reload();
-                    } else {
-                        alert('좋아요 실패')
-                    }
+        check_if_login()
+        $.ajax({
+            type: "POST",
+            url: "/movie_comment_like",
+            data: {'contentId_give': id, 'commentId_give': cId},
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    window.location.reload();
+                } else {
+                    // alert('좋아요 실패')
                 }
-            })
-        } else {
-            return
-        }
+            }
+        })
+
     }
 
 
