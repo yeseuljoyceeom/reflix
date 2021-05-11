@@ -467,14 +467,14 @@ def confirmId():
     p = re.compile('^[a-z0-9]{6,}')
     id = request.args.get('id_give')
 
-    if not p.match(id):
+    if p.match(id) is None:
         return jsonify({'result': 'fail', 'msg': '6자 이상의 영문 혹은 영문과 숫자를 조합하여 아이디를 입력해주세요.'})
 
     user = list(db.user.find({'userId': id}, {'_id': False}))
     if len(user) != 0:
         return jsonify({'result': 'fail', 'msg': '중복된 아이디입니다.'})
 
-    return jsonify({'result': 'success', 'msg': '사용 가능한 아이디입니다.'})
+    return jsonify({'result': 'success', 'msg': '사용 가능한 아이디입니다🎉'})
 
 
 @app.route('/signup', methods=["POST"])
